@@ -1,0 +1,47 @@
+[
+  {
+    "id": "csmt-terminus-01",
+    "place": "CSMT",
+    "title": "A station built like a cathedral",
+    "lat": 18.9398,
+    "lng": 72.8355,
+    "radius_m": 400,
+    "segment": "central-01",
+    "text": "DRAFT PLACEHOLDER. Chhatrapati Shivaji Maharaj Terminus opened as Victoria Terminus, designed by Frederick William Stevens and built through the 1880s. It became a UNESCO World Heritage Site in 2004. Replace with the team's written story.",
+    "audio": "csmt-terminus-01.mp3",
+    "icon_id": 1,
+    "duration_s": 40,
+    "source": "https://en.wikipedia.org/wiki/Chhatrapati_Shivaji_Maharaj_Terminus",
+    "approved": false
+  },
+  {
+    "id": "lower-parel-mills-01",
+    "place": "Lower Parel",
+    "title": "The mills that were here first",
+    "lat": 18.9955,
+    "lng": 72.8301,
+    "radius_m": 450,
+    "segment": "western-01",
+    "text": "DRAFT PLACEHOLDER. Before the towers, this was Girangaon, the village of mills. The Great Bombay Textile Strike of 1982 shut most of them down. Replace with the team's written story.",
+    "audio": "lower-parel-mills-01.mp3",
+    "icon_id": 2,
+    "duration_s": 40,
+    "source": "https://en.wikipedia.org/wiki/Great_Bombay_textile_strike",
+    "approved": false
+  },
+  {
+    "id": "mahim-causeway-01",
+    "place": "Mahim",
+    "title": "The road a widow paid for",
+    "lat": 19.0436,
+    "lng": 72.8382,
+    "radius_m": 350,
+    "segment": "western-01",
+    "text": "DRAFT PLACEHOLDER. The Mahim Causeway joined Mahim and Bandra in 1845, paid for largely by Lady Avabai Jamsetjee Jejeebhoy after boats crossing the creek were lost. Replace with the team's written story.",
+    "audio": "mahim-causeway-01.mp3",
+    "icon_id": 3,
+    "duration_s": 40,
+    "source": "https://en.wikipedia.org/wiki/Mahim_Causeway",
+    "approved": false
+  }
+]
