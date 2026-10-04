@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TFT Web Lab</title>
+<style>
+  :root {
+    --bg: #f6f3f8;
+    --panel: #ffffff;
+    --ink: #1d1b26;
+    --muted: #6b6878;
+    --line: #e4dfea;
+    --accent: #302cfb;
+    --accent-ink: #ffffff;
+    --pink: #fe019a;
+    --ok: #12a150;
+    --bad: #d93a3a;
+    --radius: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14131a; --panel: #1e1c27; --ink: #ecebf2; --muted: #9a97a8; --line: #2f2c3b;
+      --accent: #6b67ff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); }
+  header {
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 12px 20px; background: var(--panel); border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 5;
+  }
+  header h1 { font-size: 17px; margin: 0 12px 0 0; letter-spacing: .2px; }
+  header h1 span { color: var(--pink); }
+  .pill { padding: 3px 10px; border-radius: 999px; font-size: 12px; background: var(--line); color: var(--muted); }
+  .pill.on { background: color-mix(in srgb, var(--ok) 18%, transparent); color: var(--ok); }
+  .spacer { flex: 1; }
+  .layout { display: grid; grid-template-columns: 190px 1fr; min-height: calc(100vh - 58px); }
+  nav { border-right: 1px solid var(--line); padding: 12px 8px; background: var(--panel); }
+  nav button {
+    display: block; width: 100%; text-align: left; border: 0; background: none; color: var(--ink);
+    padding: 9px 12px; border-radius: 8px; font: inherit; cursor: pointer; margin-bottom: 2px;
+  }
+  nav button:hover { background: var(--line); }
+  nav button.active { background: var(--accent); color: var(--accent-ink); }
+  main { padding: 20px; max-width: 1100px; }
+  section { display: none; }
+  section.active { display: block; }
+  h2 { font-size: 20px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 16px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
+  .card h3 { margin: 0 0 12px; font-size: 14px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  label.f { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+  input[type=text], input[type=number], select, textarea {
+    font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+    border-radius: 8px; padding: 7px 9px;
+  }
+  textarea { width: 100%; min-height: 90px; resize: vertical; }
+  input[type=color] { width: 44px; height: 34px; padding: 2px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+  input[type=range] { width: 220px; accent-color: var(--accent); }
+  button.b {
+    font: inherit; border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+    padding: 7px 14px; border-radius: 8px; cursor: pointer;
+  }
+  button.b:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  button.b:disabled { opacity: .5; cursor: not-allowed; }
+  .swatch { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line); cursor: pointer; }
+  .muted { color: var(--muted); }
+  canvas.view { width: 100%; height: auto; background: #000; border-radius: 8px; display: block; }
+  .progress { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; flex: 1; min-width: 160px; }
+  .progress > div { height: 100%; width: 0; background: var(--accent); transition: width .1s; }
+  #log { height: 380px; overflow: auto; background: #0e0d13; color: #cfe8cf; font: 12px/1.4 ui-monospace, Consolas, monospace; padding: 10px; border-radius: 8px; white-space: pre-wrap; }
+  #log .tx { color: #9db7ff; }
+  #log .err { color: #ff8a8a; }
+  .warn { background: color-mix(in srgb, var(--bad) 12%, transparent); border: 1px solid var(--bad); color: var(--ink); padding: 12px 14px; border-radius: 10px; margin-bottom: 16px; display: none; }
+  .iconbtn { font: inherit; border: 1px solid var(--line); background: var(--bg); color: var(--ink); width: 32px; height: 32px; border-radius: 8px; cursor: pointer; }
+  .iconbtn:hover { border-color: var(--accent); }
+  .iconbtn:disabled { opacity: .35; cursor: default; }
+  #gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+  .frame { border: 2px solid var(--line); border-radius: 10px; padding: 8px; }
+  .frame.current { border-color: var(--accent); }
+  .frame canvas { cursor: pointer; }
+  .frame .name { font-size: 12px; margin: 6px 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .frame .row { margin: 0; gap: 6px; }
+  kbd { font: 12px ui-monospace, Consolas, monospace; background: var(--line); padding: 1px 5px; border-radius: 4px; }
+  @media (max-width: 720px) {
+    .layout { grid-template-columns: 1fr; }
+    nav { display: flex; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+    nav button { white-space: nowrap; width: auto; }
+    main { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>TFT <span>Web Lab</span></h1>
+  <span id="status" class="pill">Not connected</span>
+  <span id="devinfo" class="muted"></span>
+  <div class="spacer"></div>
+  <button id="btnConnect" class="b primary">Connect board</button>
+  <button id="btnDisconnect" class="b" disabled>Disconnect</button>
+</header>
+
+<div class="layout">
+  <nav id="nav">
+    <button data-tab="display" class="active">Display</button>
+    <button data-tab="text">Text</button>
+    <button data-tab="image">Images</button>
+    <button data-tab="console">Console</button>
+  </nav>
+
+  <main>
+    <div id="noSerial" class="warn">
+      This browser can't talk to USB devices. Open this page in <b>Chrome</b> or <b>Edge</b> on
+      <kbd>http://localhost:8000</kbd>.
+    </div>
+
+    <!-- DISPLAY -->
+    <section id="tab-display" class="active">
+      <h2>Display</h2>
+      <p class="sub">Orientation, solid colors and test patterns.</p>
+      <div class="grid2">
+        <div class="card">
+          <h3>Orientation</h3>
+          <div class="row">
+            <select id="dispRot" class="rotSelect">
+              <option value="0">Portrait (240×320)</option>
+              <option value="1">Landscape (320×240)</option>
+              <option value="2">Portrait, flipped</option>
+              <option value="3" selected>Landscape, flipped</option>
+            </select>
+          </div>
+          <h3 style="margin-top:16px">Colors</h3>
+          <div class="row">
+            <label><input id="invert" type="checkbox"> Invert all colors</label>
+          </div>
+          <p class="muted" style="margin:0">Change this if black shows as white and colors look like a photo negative. The board remembers it.</p>
+        </div>
+        <div class="card">
+          <h3>Fill color</h3>
+          <div class="row" id="swatches"></div>
+          <div class="row">
+            <input id="fillColor" type="color" value="#fe019a">
+            <button id="btnFill" class="b">Fill with this color</button>
+          </div>
+          <div class="row">
+            <button id="btnColorTest" class="b">Run color test (R G B W K)</button>
+            <button id="btnTestPat" class="b">Test pattern</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TEXT -->
+    <section id="tab-text">
+      <h2>Text</h2>
+      <p class="sub">The board wraps the text and, on "Largest that fits", picks the biggest size that fits inside the margin.</p>
+      <div class="card">
+        <textarea id="txt" placeholder="Enter = new line">Hello from my display</textarea>
+        <div class="row" style="margin-top:10px">
+          <label class="f">Font
+            <select id="txtFont">
+              <option value="0">Sans Bold</option>
+              <option value="1">Sans</option>
+              <option value="2">Serif Bold</option>
+              <option value="3">Mono Bold</option>
+            </select>
+          </label>
+          <label class="f">Size
+            <select id="txtSize">
+              <option value="0">Largest that fits</option>
+              <option value="1">1 (smallest)</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7 (largest)</option>
+            </select>
+          </label>
+          <label class="f">Align
+            <select id="txtAlign">
+              <option value="l">Left</option>
+              <option value="c" selected>Center</option>
+              <option value="r">Right</option>
+            </select>
+          </label>
+          <label class="f">Orientation
+            <select id="txtRot" class="rotSelect">
+              <option value="0">Portrait</option>
+              <option value="1">Landscape</option>
+              <option value="2">Portrait, flipped</option>
+              <option value="3" selected>Landscape, flipped</option>
+            </select>
+          </label>
+          <label class="f">Text <input id="txtFg" type="color" value="#000000"></label>
+          <label class="f">Background <input id="txtBg" type="color" value="#fe019a"></label>
+          <label class="f">Margin <span><input id="txtMargin" type="range" min="0" max="60" value="16" style="width:120px"> <span id="txtMarginVal">16</span>px</span></label>
+        </div>
+        <div class="row">
+          <button id="btnText" class="b primary">Show on screen</button>
+          <label class="muted"><input id="txtAuto" type="checkbox" checked> Update while typing</label>
+          <span id="txtResult" class="muted"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- IMAGES -->
+    <section id="tab-image">
+      <h2>Images</h2>
+      <p class="sub">Pick or drop any images (PNG, JPG, GIF, WebP…). They are resized here and sent to the screen.</p>
+      <div class="grid2">
+        <div class="card">
+          <div class="row"><input id="imgFile" type="file" accept="image/*" multiple></div>
+          <div class="row">
+            <label class="f">Orientation
+              <select id="imgRot" class="rotSelect">
+                <option value="0">Portrait (240×320)</option>
+                <option value="1">Landscape (320×240)</option>
+                <option value="2">Portrait, flipped</option>
+                <option value="3" selected>Landscape, flipped</option>
+              </select>
+            </label>
+            <label class="f">Fit
+              <select id="imgFit">
+                <option value="contain">Fit (whole image)</option>
+                <option value="cover">Fill (crop edges)</option>
+                <option value="stretch">Stretch</option>
+              </select>
+            </label>
+            <label class="f">Background <input id="imgBg" type="color" value="#000000"></label>
+          </div>
+          <div class="row">
+            <button id="btnImg" class="b primary" disabled>Send to screen</button>
+            <button id="btnAdd" class="b" disabled>Add to gallery</button>
+            <div class="progress"><div id="imgProg"></div></div>
+          </div>
+          <p id="imgInfo" class="muted" style="margin:0 0 6px"></p>
+          <p class="muted" style="margin:0">A photo takes about 4 seconds over USB; a simple drawing with flat colors is much faster. With several files chosen, the preview shows the first one and "Add to gallery" adds them all.</p>
+        </div>
+        <div class="card">
+          <h3>Preview (exactly what the screen will show)</h3>
+          <canvas id="imgPreview" class="view" width="320" height="240"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Gallery</h3>
+        <div class="row">
+          <button id="btnPlay" class="b primary">Play</button>
+          <label class="f">Change every (ms)
+            <input id="playMs" type="number" value="5000" min="0" max="600000" step="100" style="width:110px">
+          </label>
+          <button id="btnGalClear" class="b">Remove all</button>
+          <span id="galInfo" class="muted"></span>
+        </div>
+        <p class="muted" style="margin-top:0">Click a picture to show it. Play steps through them in order; set 0 to go as fast as the USB link allows. The gallery is kept in this browser.</p>
+        <div id="gallery"></div>
+      </div>
+    </section>
+
+    <!-- CONSOLE -->
+    <section id="tab-console">
+      <h2>Console</h2>
+      <p class="sub">Raw serial traffic. Commands are listed in the firmware's header comment.</p>
+      <div class="card">
+        <div class="row">
+          <input id="cmd" type="text" placeholder="e.g. FILL ff0000  or  TEXT 0 0 c ffffff 000000 16 Hi there" style="flex:1; min-width:240px">
+          <button id="btnSend" class="b primary">Send</button>
+          <label class="muted"><input id="logNoise" type="checkbox"> Show transfer lines</label>
+          <button id="btnLogClear" class="b">Clear</button>
+        </div>
+        <div id="log"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+// ===========================================================================
+// Serial connection
+// ===========================================================================
+const BAUD = 460800;
+const $ = id => document.getElementById(id);
+let port = null, writer = null, reader = null;
+let lineBuf = '';
+const waiters = [];
+const dev = { w: 320, h: 240, rot: 3 };
+let chain = Promise.resolve();
+
+if (!('serial' in navigator)) $('noSerial').style.display = 'block';
+
+function log(text, cls) {
+  const isNoise = /^(K|READY|OK IMG)$/.test(text);
+  if (isNoise && !$('logNoise').checked) return;
+  const el = $('log');
+  const line = document.createElement('div');
+  if (cls) line.className = cls;
+  line.textContent = text;
+  el.appendChild(line);
+  while (el.childNodes.length > 600) el.removeChild(el.firstChild);
+  el.scrollTop = el.scrollHeight;
+}
+
+function setStatus(connected) {
+  $('status').textContent = connected ? 'Connected' : 'Not connected';
+  $('status').classList.toggle('on', connected);
+  $('btnConnect').disabled = connected;
+  $('btnDisconnect').disabled = !connected;
+  $('btnImg').disabled = !connected || !imgLoaded;
+  $('btnAdd').disabled = !imgFiles.length;
+}
+
+function waitFor(pred, timeout = 3000) {
+  return new Promise((resolve, reject) => {
+    const w = { pred, resolve };
+    waiters.push(w);
+    setTimeout(() => {
+      const i = waiters.indexOf(w);
+      if (i >= 0) { waiters.splice(i, 1); reject(new Error('timeout')); }
+    }, timeout);
+  });
+}
+
+function onLine(line) {
+  for (let i = 0; i < waiters.length; i++) {
+    if (waiters[i].pred(line)) { const w = waiters.splice(i, 1)[0]; w.resolve(line); break; }
+  }
+  if (line.startsWith('INFO ')) {
+    const [, w, h, r, inv] = line.split(' ').map(Number);
+    dev.w = w; dev.h = h; dev.rot = r;
+    if (inv === 0 || inv === 1) $('invert').checked = !!inv;
+    $('devinfo').textContent = `${w}×${h}, rotation ${r}`;
+    document.querySelectorAll('.rotSelect').forEach(s => s.value = String(r));
+    renderPreview();
+  }
+  log(line, line.startsWith('ERR') ? 'err' : '');
+}
+
+let keepReading = false;
+async function readLoop() {
+  const dec = new TextDecoder();
+  keepReading = true;
+  while (keepReading && port && port.readable) {
+    reader = port.readable.getReader();
+    try {
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        lineBuf += dec.decode(value, { stream: true });
+        let i;
+        while ((i = lineBuf.indexOf('\n')) >= 0) {
+          const line = lineBuf.slice(0, i).replace(/\r$/, '');
+          lineBuf = lineBuf.slice(i + 1);
+          if (line) onLine(line);
+        }
+      }
+    } catch (e) {
+      log('Read error: ' + e.message, 'err');
+      break;
+    } finally {
+      reader.releaseLock();
+    }
+  }
+}
+
+async function writeRaw(data) {
+  if (!writer) throw new Error('Not connected');
+  await writer.write(typeof data === 'string' ? new TextEncoder().encode(data) : data);
+}
+
+// Runs fn after any earlier command has finished, so replies don't get mixed up
+function exclusive(fn) {
+  const p = chain.then(fn, fn);
+  chain = p.catch(() => {});
+  return p;
+}
+
+// Sends one command and waits for a reply line starting with `expect`
+function send(cmd, expect = 'OK', timeout = 4000) {
+  return exclusive(async () => {
+    const reply = waitFor(l => l.startsWith(expect) || l.startsWith('ERR'), timeout);
+    log('> ' + cmd, 'tx');
+    await writeRaw(cmd + '\n');
+    const line = await reply;
+    if (line.startsWith('ERR')) throw new Error(line);
+    return line;
+  });
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const report = e => log(e.message, 'err');
+
+$('btnConnect').onclick = async () => {
+  try {
+    port = await navigator.serial.requestPort();
+    await port.open({ baudRate: BAUD, bufferSize: 65536 });
+    try { await port.setSignals({ dataTerminalReady: false, requestToSend: false }); } catch {}
+    writer = port.writable.getWriter();
+    readLoop();
+    log('Port opened, waiting for the board...');
+    let ok = false;
+    for (let i = 0; i < 12 && !ok; i++) {
+      try { await send('PING', 'PONG', 500); ok = true; } catch { await sleep(250); }
+    }
+    if (!ok) throw new Error('The board did not answer. Is the TftBridge sketch uploaded, and the Arduino Serial Monitor closed?');
+    setStatus(true);
+    await send('INFO', 'INFO');
+  } catch (e) {
+    log(e.message, 'err');
+    alert(e.message);
+    await disconnect();
+  }
+};
+
+async function disconnect() {
+  stopPlay();
+  keepReading = false;
+  try { if (reader) await reader.cancel(); } catch {}
+  try { if (writer) { writer.releaseLock(); } } catch {}
+  try { if (port) await port.close(); } catch {}
+  port = writer = reader = null;
+  setStatus(false);
+}
+$('btnDisconnect').onclick = disconnect;
+
+// ===========================================================================
+// Tabs
+// ===========================================================================
+$('nav').addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  document.querySelectorAll('nav button').forEach(x => x.classList.toggle('active', x === b));
+  document.querySelectorAll('main section').forEach(s => s.classList.toggle('active', s.id === 'tab-' + b.dataset.tab));
+});
+
+function hex(c) { return c.replace('#', ''); }
+function screenSize(rot) { return (Number(rot) % 2 === 1) ? [320, 240] : [240, 320]; }
+
+async function setRotation(r) {
+  if (Number(r) === dev.rot) return;
+  await send('ROT ' + r, 'INFO');
+}
+document.querySelectorAll('.rotSelect').forEach(s => s.addEventListener('change', async () => {
+  try {
+    if (!writer) {   // not connected: only the preview changes
+      dev.rot = Number(s.value);
+      [dev.w, dev.h] = screenSize(dev.rot);
+      document.querySelectorAll('.rotSelect').forEach(x => x.value = s.value);
+      renderPreview();
+      return;
+    }
+    await setRotation(s.value);
+    if (s.id === 'txtRot') sendText();
+  } catch (e) { report(e); }
+}));
+
+// ===========================================================================
+// Display
+// ===========================================================================
+const SWATCHES = ['#ff0000', '#00ff00', '#0000ff', '#ffffff', '#000000', '#ffff00', '#00ffff', '#ff00ff', '#fe019a', '#302cfb'];
+SWATCHES.forEach(c => {
+  const d = document.createElement('div');
+  d.className = 'swatch'; d.style.background = c; d.title = c;
+  d.onclick = () => { stopPlay(); $('fillColor').value = c; send('FILL ' + hex(c)).catch(report); };
+  $('swatches').appendChild(d);
+});
+$('btnFill').onclick = () => { stopPlay(); send('FILL ' + hex($('fillColor').value)).catch(report); };
+$('btnTestPat').onclick = () => { stopPlay(); send('TESTPAT').catch(report); };
+$('btnColorTest').onclick = async () => {
+  stopPlay();
+  try {
+    for (const c of ['ff0000', '00ff00', '0000ff', 'ffffff', '000000']) { await send('FILL ' + c); await sleep(700); }
+  } catch (e) { report(e); }
+};
+$('invert').onchange = () => send('INVERT ' + ($('invert').checked ? 1 : 0)).catch(report);
+
+// ===========================================================================
+// Text
+// ===========================================================================
+async function sendText() {
+  if (!writer) return;
+  const t = $('txt').value.replace(/\r/g, '').split('\n').map(s => s.replace(/\s+/g, ' ').trim()).join('\\n');
+  if (!t.replace(/\\n/g, '')) return;
+  stopPlay();
+  try {
+    await setRotation($('txtRot').value);
+    const r = await send(`TEXT ${$('txtFont').value} ${$('txtSize').value} ${$('txtAlign').value} ${hex($('txtFg').value)} ${hex($('txtBg').value)} ${$('txtMargin').value} ${t}`, 'OK TEXT', 8000);
+    $('txtResult').textContent = r.replace('OK TEXT ', '').replace('size=', 'line height ').replace('lines=', 'px · lines ');
+  } catch (e) { report(e); $('txtResult').textContent = 'Error: ' + e.message; }
+}
+let txtTimer = null;
+function textChanged() {
+  $('txtMarginVal').textContent = $('txtMargin').value;
+  if (!$('txtAuto').checked) return;
+  clearTimeout(txtTimer);
+  txtTimer = setTimeout(sendText, 450);
+}
+['txt', 'txtFont', 'txtSize', 'txtAlign', 'txtFg', 'txtBg', 'txtMargin'].forEach(id => $(id).addEventListener('input', textChanged));
+$('btnText').onclick = sendText;
+
+// ===========================================================================
+// Images
+// ===========================================================================
+let imgLoaded = null;     // the first chosen picture, shown in the preview
+let imgFiles = [];        // all chosen files
+
+// Draws the picture on the canvas at screen size, using the Fit and Background settings
+function drawFitted(canvas, img, W, H) {
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = $('imgBg').value;
+  ctx.fillRect(0, 0, W, H);
+  if (!img) return;
+  const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
+  const fit = $('imgFit').value;
+  let dw, dh;
+  if (fit === 'stretch') { dw = W; dh = H; }
+  else {
+    const s = fit === 'cover' ? Math.max(W / iw, H / ih) : Math.min(W / iw, H / ih);
+    dw = iw * s; dh = ih * s;
+  }
+  ctx.imageSmoothingQuality = 'high';
+  ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+}
+
+// Canvas pixels -> the screen's 16-bit color format (RGB565, big-endian)
+function toRGB565(canvas) {
+  const px = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+  const out = new Uint8Array(canvas.width * canvas.height * 2);
+  for (let i = 0, j = 0; i < px.length; i += 4, j += 2) {
+    const v = ((px[i] & 0xF8) << 8) | ((px[i + 1] & 0xFC) << 3) | (px[i + 2] >> 3);
+    out[j] = v >> 8; out[j + 1] = v & 0xFF;
+  }
+  return out;
+}
+
+function drawRGB565(canvas, data, W, H) {
+  canvas.width = W; canvas.height = H;
+  const img = new ImageData(W, H);
+  for (let j = 0, i = 0; j < data.length; j += 2, i += 4) {
+    const v = (data[j] << 8) | data[j + 1];
+    img.data[i] = (v >> 8) & 0xF8; img.data[i + 1] = (v >> 3) & 0xFC; img.data[i + 2] = (v << 3) & 0xF8;
+    img.data[i + 3] = 255;
+  }
+  canvas.getContext('2d').putImageData(img, 0, 0);
+}
+
+function renderPreview() {
+  const [W, H] = screenSize($('imgRot').value);
+  drawFitted($('imgPreview'), imgLoaded, W, H);
+  if (!imgLoaded) return;
+  $('imgInfo').textContent = `${imgLoaded.naturalWidth}×${imgLoaded.naturalHeight} → ${W}×${H}` + (imgFiles.length > 1 ? ` · ${imgFiles.length} files chosen` : '');
+}
+
+function loadImage(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error('Could not read ' + file.name));
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+// "Angry (2)" before "Angry (10)"
+const byName = (a, b) => a.name.localeCompare(b.name, undefined, { numeric: true });
+
+async function chooseFiles(files) {
+  imgFiles = [...files].filter(f => f.type.startsWith('image/')).sort(byName);
+  if (!imgFiles.length) return;
+  try { imgLoaded = await loadImage(imgFiles[0]); } catch (e) { report(e); imgLoaded = null; }
+  renderPreview();
+  setStatus(!!writer);
+}
+$('imgFile').onchange = e => chooseFiles(e.target.files);
+['imgFit', 'imgBg'].forEach(id => $(id).addEventListener('input', renderPreview));
+const pv = $('imgPreview');
+pv.addEventListener('dragover', e => e.preventDefault());
+pv.addEventListener('drop', e => { e.preventDefault(); chooseFiles(e.dataTransfer.files); });
+
+// Packs equal neighbouring pixels into runs: [count hi, count lo, color hi, color lo]
+function toRuns(data) {
+  const out = [];
+  for (let j = 0; j < data.length;) {
+    const hi = data[j], lo = data[j + 1];
+    let n = 1;
+    while (n < 65535 && j + n * 2 < data.length && data[j + n * 2] === hi && data[j + n * 2 + 1] === lo) n++;
+    out.push(n >> 8, n & 0xFF, hi, lo);
+    j += n * 2;
+    if (out.length >= data.length) return null;   // no gain: send it plain
+  }
+  return new Uint8Array(out);
+}
+
+// Sends one full-screen picture (RGB565 data), in the shorter of the two formats
+function sendPicture(data, W, H, onProgress) {
+  const runs = toRuns(data);
+  const out = runs || data;
+  const header = runs ? `IMGR ${W} ${H} ${runs.length}` : `IMG 0 0 ${W} ${H}`;
+  return exclusive(async () => {
+    const ready = waitFor(l => l === 'READY' || l.startsWith('ERR'), 3000);
+    log('> ' + header, 'tx');
+    await writeRaw(header + '\n');
+    if ((await ready) !== 'READY') throw new Error('Board refused the image');
+    const CH = 4096;
+    for (let off = 0; off < out.length; off += CH) {
+      const last = off + CH >= out.length;
+      const ack = waitFor(l => l === 'K' || l.startsWith('ERR'), 4000);
+      const done = last ? waitFor(l => l === 'OK IMG' || l.startsWith('ERR'), 5000) : null;
+      await writeRaw(out.subarray(off, off + CH));
+      if ((await ack) !== 'K') throw new Error('Transfer error');
+      if (done) await done;
+      if (onProgress) onProgress(Math.min(1, (off + CH) / out.length));
+    }
+  });
+}
+
+const showProgress = f => $('imgProg').style.width = (100 * f).toFixed(1) + '%';
+
+$('btnImg').onclick = async () => {
+  stopPlay();
+  $('btnImg').disabled = true;
+  try {
+    await setRotation($('imgRot').value);
+    renderPreview();
+    const c = $('imgPreview');
+    const t0 = performance.now();
+    await sendPicture(toRGB565(c), c.width, c.height, showProgress);
+    $('imgInfo').textContent = `Sent in ${((performance.now() - t0) / 1000).toFixed(1)} s`;
+  } catch (e) {
+    report(e); alert('Image failed: ' + e.message);
+  } finally {
+    $('btnImg').disabled = !writer || !imgLoaded;
+    setTimeout(() => showProgress(0), 1500);
+  }
+};
+
+// ---- Gallery ---------------------------------------------------------------
+// Kept in the browser's own storage (IndexedDB), so it is still there next time
+const db = new Promise((resolve, reject) => {
+  const r = indexedDB.open('tftlab', 1);
+  r.onupgradeneeded = () => r.result.createObjectStore('kv');
+  r.onsuccess = () => resolve(r.result);
+  r.onerror = () => reject(r.error);
+});
+async function dbGet(key) {
+  const store = (await db).transaction('kv').objectStore('kv');
+  return new Promise((resolve, reject) => {
+    const q = store.get(key);
+    q.onsuccess = () => resolve(q.result);
+    q.onerror = () => reject(q.error);
+  });
+}
+async function dbSet(key, value) {
+  const tx = (await db).transaction('kv', 'readwrite');
+  tx.objectStore('kv').put(value, key);
+  return new Promise((resolve, reject) => { tx.oncomplete = resolve; tx.onerror = () => reject(tx.error); });
+}
+
+let gallery = [];     // [{ name, w, h, data (RGB565 bytes) }]
+let galCurrent = -1;
+function saveGallery() {
+  dbSet('gallery', gallery).catch(e => log('The gallery could not be saved in this browser: ' + e.message, 'err'));
+}
+
+function el(tag, props = {}, ...children) {
+  const e = document.createElement(tag);
+  Object.assign(e, props);
+  children.forEach(c => e.append(c));
+  return e;
+}
+
+function renderGallery() {
+  const box = $('gallery');
+  box.innerHTML = '';
+  gallery.forEach((g, i) => {
+    const canvas = el('canvas', { className: 'view', title: 'Show on screen' });
+    drawRGB565(canvas, g.data, g.w, g.h);
+    canvas.onclick = () => { stopPlay(); showGallery(i, showProgress).catch(() => {}).finally(() => setTimeout(() => showProgress(0), 800)); };
+    const up = el('button', { className: 'iconbtn', textContent: '←', title: 'Move earlier', disabled: i === 0 });
+    const down = el('button', { className: 'iconbtn', textContent: '→', title: 'Move later', disabled: i === gallery.length - 1 });
+    const del = el('button', { className: 'iconbtn', textContent: '✕', title: 'Remove' });
+    const moved = () => { stopPlay(); galCurrent = -1; saveGallery(); renderGallery(); };
+    up.onclick = () => { [gallery[i - 1], gallery[i]] = [gallery[i], gallery[i - 1]]; moved(); };
+    down.onclick = () => { [gallery[i + 1], gallery[i]] = [gallery[i], gallery[i + 1]]; moved(); };
+    del.onclick = () => { gallery.splice(i, 1); moved(); };
+    box.append(el('div', { className: 'frame' + (i === galCurrent ? ' current' : '') },
+      canvas,
+      el('div', { className: 'name', textContent: g.name, title: g.name }),
+      el('div', { className: 'row' }, up, down, el('div', { className: 'spacer' }), del)));
+  });
+  if (!playing) $('galInfo').textContent = gallery.length ? `${gallery.length} picture(s)` : 'Empty. Choose images above and click "Add to gallery".';
+}
+
+function markCurrent(i) {
+  galCurrent = i;
+  document.querySelectorAll('#gallery .frame').forEach((f, k) => f.classList.toggle('current', k === i));
+}
+
+async function showGallery(i, onProgress) {
+  const g = gallery[i];
+  if (!g) return;
+  if (!writer) { alert('Connect the board first.'); throw new Error('Not connected'); }
+  try {
+    if (g.w !== dev.w) await setRotation(g.w > g.h ? 3 : 0);
+    await sendPicture(g.data, g.w, g.h, onProgress);
+    markCurrent(i);
+  } catch (e) { report(e); throw e; }
+}
+
+$('btnAdd').onclick = async () => {
+  const [W, H] = screenSize($('imgRot').value);
+  const c = document.createElement('canvas');
+  $('btnAdd').disabled = true;
+  for (const f of imgFiles) {
+    try {
+      drawFitted(c, await loadImage(f), W, H);
+      gallery.push({ name: f.name.replace(/\.[^.]*$/, ''), w: W, h: H, data: toRGB565(c) });
+    } catch (e) { report(e); }
+  }
+  saveGallery();
+  renderGallery();
+  $('btnAdd').disabled = false;
+};
+
+$('btnGalClear').onclick = () => {
+  if (!gallery.length || !confirm('Remove all pictures from the gallery?')) return;
+  stopPlay();
+  gallery = []; galCurrent = -1;
+  saveGallery(); renderGallery();
+};
+
+let playing = false;
+function stopPlay() {
+  if (!playing) return;
+  playing = false;
+  $('btnPlay').textContent = 'Play';
+  $('galInfo').textContent = `${gallery.length} picture(s)`;
+}
+$('btnPlay').onclick = async () => {
+  if (playing) return stopPlay();
+  if (!writer) return alert('Connect the board first.');
+  if (!gallery.length) return alert('The gallery is empty.');
+  playing = true; $('btnPlay').textContent = 'Stop';
+  let i = galCurrent;
+  while (playing && writer && gallery.length) {
+    i = (i + 1) % gallery.length;
+    const t0 = performance.now();
+    try { await showGallery(i); } catch { break; }
+    if (playing) $('galInfo').textContent = `Playing ${i + 1} of ${gallery.length}`;
+    const wait = Math.max(0, Number($('playMs').value) || 0) - (performance.now() - t0);
+    if (wait > 0) await sleep(wait);
+  }
+  stopPlay();
+};
+
+dbGet('gallery').then(saved => { if (Array.isArray(saved)) { gallery = saved; renderGallery(); } }).catch(() => {});
+
+// ===========================================================================
+// Console
+// ===========================================================================
+async function sendRaw() {
+  const v = $('cmd').value.trim();
+  if (!v || !writer) return;
+  log('> ' + v, 'tx');
+  await exclusive(() => writeRaw(v + '\n'));
+  $('cmd').value = '';
+}
+$('btnSend').onclick = sendRaw;
+$('cmd').addEventListener('keydown', e => { if (e.key === 'Enter') sendRaw(); });
+$('btnLogClear').onclick = () => $('log').innerHTML = '';
+
+renderPreview();
+renderGallery();
+setStatus(false);
+</script>
+</body>
+</html>
