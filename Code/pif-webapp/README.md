@@ -1,6 +1,6 @@
-# Play it Forward: web app and pet
+# Jam: web app and pet
 
-Location-triggered commute stories for Mumbai. As you travel, the app notices the places you
+**Jam** is location-triggered commute stories for Mumbai. As you travel, the app notices the places you
 pass and plays a short story about each one: what was there before the road, what happened
 there, what everyone walks past every day. A small companion object, **the pet** (an
 ESP32-A1S Audio Kit with a colour screen and a speaker), can play the stories too, show where

@@ -152,7 +152,7 @@ const missing: Draw = (ctx, W, H, m, tick) => {
 const startup: Draw = (ctx, W, H, _m, tick) => {
   if (!crane) {
     // The crane sprite isn't in the public repository (see optionalAssets.ts).
-    centred(ctx, 'FreeSansBold12pt7b', 'Play it Forward', Math.floor(H / 2), INK, W)
+    centred(ctx, 'FreeSansBold12pt7b', 'Jam', Math.floor(H / 2), INK, W)
     return
   }
   const rowBytes = Math.ceil(crane.width / 2)
@@ -168,7 +168,7 @@ const startup: Draw = (ctx, W, H, _m, tick) => {
       ctx.fillStyle = crane.palette[idx]
       ctx.fillRect(x0 + x, y0 + y, 1, 1)
     }
-  centred(ctx, 'FreeSansBold12pt7b', 'Play it Forward', Math.min(H - 8, y0 + crane.height + 26), INK, W)
+  centred(ctx, 'FreeSansBold12pt7b', 'Jam', Math.min(H - 8, y0 + crane.height + 26), INK, W)
 }
 
 export const SCREENS: { id: string; name: string; draw: Draw }[] = [

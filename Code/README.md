@@ -4,7 +4,7 @@ All the software. Licence: MIT (see [LICENSE.md](../LICENSE.md)).
 
 | Folder | What it is | Runs on |
 |---|---|---|
-| [`pif-webapp/`](pif-webapp) | The Play it Forward app, the pet's firmware, the pet screen lab and media tools, and the converter scripts | Browser (any modern phone or computer); ESP32 for `firmware/` |
+| [`pif-webapp/`](pif-webapp) | The Jam app, the pet's firmware, the pet screen lab and media tools, and the converter scripts | Browser (any modern phone or computer); ESP32 for `firmware/` |
 | [`Local_Host/`](Local_Host) | **TFT Web Lab**: a standalone page plus bridge firmware for driving the screen from a browser over USB | Chrome/Edge on a computer + an ESP32 with the TFT |
 
 ---

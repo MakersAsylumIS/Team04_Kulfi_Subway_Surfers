@@ -1,10 +1,10 @@
-# Play it Forward — "Subway Surfers" commute story web app
+# Jam — commute story web app ("Subway Surfers", Play it Forward residency)
 
 > Project instructions for coding agents. Read this before changing anything.
 
 ## What this is
 
-A location-triggered story web app for Mumbai commuters, built for the Play it Forward
+**Jam** is a location-triggered story web app for Mumbai commuters, built for the Play it Forward
 residency (Kulfi Collective × Makers Asylum). As someone travels a train corridor, the
 app notices places they're passing and plays a 40-second story about each one — what was
 here before the road, what happened here, what everyone walks past daily.

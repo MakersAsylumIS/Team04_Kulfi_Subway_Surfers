@@ -60,7 +60,7 @@ enum PlaybackState : uint8_t { STATE_IDLE = 0, STATE_PLAYING = 1, STATE_PAUSED =
 enum TransportCmd : uint8_t { CMD_RESUME = 0, CMD_PAUSE = 1, CMD_STOP = 2, CMD_VOLUME = 3 };
 enum InputEvent : uint8_t { INPUT_PAT = 1, INPUT_DOUBLE_PAT = 2 };
 
-#define PET_NAME "PiF Pet"
+#define PET_NAME "Jam Pet"
 
 NimBLECharacteristic* playbackChr = nullptr;
 NimBLECharacteristic* inputChr = nullptr;
@@ -416,7 +416,7 @@ void setup() {
   Serial.setRxBufferSize(8192);
   Serial.begin(SERIAL_BAUD);
   delay(300);
-  Serial.println("\nPiF pet story player");
+  Serial.println("\nJam pet story player");
   if (esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_EXT0) Serial.println("Woke up (KEY1)");
   AudioToolsLogger.begin(Serial, AudioToolsLogLevel::Warning);
   requestLock = xSemaphoreCreateMutex();

@@ -126,7 +126,7 @@ function drawScreen(
     ctx.drawImage(frame, -sw / 2, -sh / 2, sw, sh)
     ctx.restore()
   }
-  if (s.showName && !design) centred(ctx, 'FreeSansBold12pt7b', 'Play it Forward', s.nameY, '#ffffff', W)
+  if (s.showName && !design) centred(ctx, 'FreeSansBold12pt7b', 'Jam', s.nameY, '#ffffff', W)
   drawLayers(ctx, layers, tick, s.smooth)
   // What the panel can actually show.
   const img = ctx.getImageData(0, 0, W, H)
@@ -1393,7 +1393,7 @@ export function PetLab() {
             <Field label="Frames per second">
               <Num value={s.fps} onChange={(v) => set('fps', v)} min={1} max={30} />
             </Field>
-            <Field label='"Play it Forward" under it'>
+            <Field label='"Jam" under it'>
               <input type="checkbox" checked={s.showName} onChange={(e) => set('showName', e.target.checked)} />
             </Field>
             {s.showName && (

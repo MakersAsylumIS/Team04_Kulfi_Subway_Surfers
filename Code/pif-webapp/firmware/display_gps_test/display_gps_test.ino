@@ -53,7 +53,7 @@ enum PlaybackState : uint8_t { STATE_IDLE = 0, STATE_PLAYING = 1, STATE_PAUSED =
 enum TransportCmd : uint8_t { CMD_RESUME = 0, CMD_PAUSE = 1, CMD_STOP = 2 };
 enum InputEvent : uint8_t { INPUT_PAT = 1, INPUT_DOUBLE_PAT = 2 };
 
-#define PET_NAME           "PiF Pet"
+#define PET_NAME           "Jam Pet"
 #define FAKE_STORY_SECONDS 40
 
 NimBLECharacteristic* playbackChr = nullptr;
@@ -84,7 +84,7 @@ void drawStatusBar() {
   tft.setTextSize(2);
   tft.setTextColor(ACCENT);
   tft.setCursor(10, 8);
-  tft.print("PiF Pet");
+  tft.print("Jam Pet");
   tft.setTextColor(connected ? INK : DIM);
   tft.setCursor(200, 8);
   tft.print(connected ? "connected" : "waiting...");
@@ -208,7 +208,7 @@ HapticCallbacks hapticCallbacks;
 void setup() {
   Serial.begin(115200);
   delay(300);
-  Serial.println("\nPiF pet display test");
+  Serial.println("\nJam pet display test");
 
   SPI.begin(TFT_CLK, -1, TFT_MOSI, TFT_CS);
   tft.init(240, 320);

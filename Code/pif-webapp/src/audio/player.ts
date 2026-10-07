@@ -160,7 +160,7 @@ function setMediaSession(meta: Pick<Story, 'title' | 'place'>) {
   navigator.mediaSession.metadata = new MediaMetadata({
     title: meta.title,
     artist: meta.place,
-    album: 'Play it Forward',
+    album: 'Jam',
   })
 }
 

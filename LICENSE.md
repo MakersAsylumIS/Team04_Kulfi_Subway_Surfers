@@ -43,7 +43,7 @@ you must make the modified source available under the same licence. Full text:
 ## Creative Commons Attribution 4.0
 
 Documentation and media are licensed under CC BY 4.0: share and adapt them for any purpose,
-including commercially, as long as you give credit ("Team Subway Surfers, Play it Forward,
+including commercially, as long as you give credit ("Jam by Team Subway Surfers, Play it Forward,
 Kulfi Collective × Makers Asylum"), link to the licence, and say if you changed anything.
 Full text: <https://creativecommons.org/licenses/by/4.0/legalcode>.
 

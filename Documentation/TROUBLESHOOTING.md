@@ -35,7 +35,7 @@ First, the two things that solve the most:
 | Symptom | Cause | Fix |
 |---|---|---|
 | Boot log ends at `entry 0x400805b4`, then silence | PSRAM on with the **ESP32 Dev Module** profile | Board **ESP32 Wrover Module** |
-| A line of garbage before "PiF pet story player" | The chip's own startup text is at 115200; the sketch talks at 921600 | Normal; ignore it |
+| A line of garbage before "Jam pet story player" | The chip's own startup text is at 115200; the sketch talks at 921600 | Normal; ignore it |
 | `gpio_pullup_en … input-only pad has no internal PU` | The audio driver tries a pull-up on pins 36/39 | Harmless |
 | Board won't start with the volume button fitted | GPIO 12 was high at power-on (it sets the flash voltage) | Button between MTDI and **3.3 V**, not ground; don't hold it while powering on |
 | Serial printed once, then nothing | The sketch only prints in `setup()` and the monitor attached late | Press RST with the monitor open |

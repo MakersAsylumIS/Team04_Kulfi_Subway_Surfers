@@ -17,8 +17,8 @@ export default defineConfig(({ mode }) => ({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       manifest: {
-        name: 'Play it Forward',
-        short_name: 'PiF',
+        name: 'Jam',
+        short_name: 'Jam',
         description: 'Stories about the places you pass on your commute.',
         theme_color: '#1c1917',
         background_color: '#fafaf9',

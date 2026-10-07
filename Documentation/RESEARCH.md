@@ -1,6 +1,6 @@
 # Research and design process
 
-How we got from a month of riding Mumbai to a story app with a pet, what the research
+How we got from a month of riding Mumbai to Jam, a story app with a pet, what the research
 actually told us, and what we'd do differently. The day-by-day version is in the
 [engineering log](ENGINEERING-LOG.md#research-findings).
 

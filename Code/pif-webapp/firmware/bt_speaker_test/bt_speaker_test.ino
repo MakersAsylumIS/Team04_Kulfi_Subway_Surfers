@@ -1,5 +1,5 @@
 // Bluetooth speaker test: the board shows up as an ordinary Bluetooth speaker
-// ("PiF Pet Speaker"). Pair it from a laptop or phone, play anything, and it comes
+// ("Jam Pet Speaker"). Pair it from a laptop or phone, play anything, and it comes
 // out of the board's speaker (or the headphone jack, if earphones are plugged in).
 //
 // This is a test of the speaker and the audio path, using normal (Classic) Bluetooth
@@ -20,7 +20,7 @@
 #include "AudioTools/Communication/A2DPStream.h"
 #include "AudioTools/AudioLibs/AudioBoardStream.h"
 
-#define SPEAKER_NAME "PiF Pet Speaker"
+#define SPEAKER_NAME "Jam Pet Speaker"
 
 BluetoothA2DPSink a2dp_sink;
 AudioBoardStream kit(AudioKitEs8388V1);  // V1, not V2: V2 is silent on our board

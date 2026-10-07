@@ -70,7 +70,7 @@ For the showcase, three spots in the venue become the three story places.
 A page for trying pictures, frame animations, sprite sheets and videos on an exact stand-in
 for the pet's 240x320 screen. It covers portrait and landscape, size, alignment, nudge,
 rotation, the white-background removal, colour mode (full 16-bit, 16 colours, cyan only), fps
-and the "Play it Forward" name. It estimates flash space and drawing time on the board, and
+and the "Jam" name. It estimates flash space and drawing time on the board, and
 "Copy these settings" hands the exact choice to whoever converts it for the firmware. Code:
 `src/lab/` (loaded only on /lab).
 

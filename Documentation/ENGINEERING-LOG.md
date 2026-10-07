@@ -6,7 +6,7 @@ This is deliberately an honest record rather than a tidy narrative. It includes 
 decisions we reversed and the days we lost, because those are the parts that are useful
 to someone else and the parts that vanish from a README.
 
-**Project:** a location-triggered story app for Mumbai commuters, plus a companion
+**Project:** Jam, a location-triggered story app for Mumbai commuters, plus a companion
 hardware object ("the pet"), built for the Play it Forward residency
 (Kulfi Collective × Makers Asylum, Sept–Oct 2026).
 

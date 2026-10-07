@@ -26,10 +26,10 @@ from the Library Manager. Board: **ESP32 Wrover Module**. Checked to compile wit
 NimBLE-Arduino 2.5.1 and ESP32 core 3.3.12.
 
 **Flash** `pet_ble_test/pet_ble_test.ino`, then open the Serial Monitor at **115200**. It
-prints `Advertising as "PiF Pet"`.
+prints `Advertising as "Jam Pet"`.
 
 **Test A, with nRF Connect on your phone:**
-1. Scan, find **PiF Pet**, connect.
+1. Scan, find **Jam Pet**, connect.
 2. Open the service starting `f4040001`. On `f4040005` (playback), tap the triple-arrow
    to turn on notifications.
 3. On `f4040002` (play), write this hex (offset 0, then `mahim-causeway-01`):
@@ -41,7 +41,7 @@ prints `Advertising as "PiF Pet"`.
 `localhost` counts as secure.
 1. `npm run dev` and open http://localhost:5173 in **Chrome**. Disconnect nRF Connect first,
    because the pet takes one connection at a time.
-2. Tap **Pair a pet**, choose **PiF Pet**. The **Test the pet** panel appears: tap Play on any
+2. Tap **Pair a pet**, choose **Jam Pet**. The **Test the pet** panel appears: tap Play on any
    story to send it straight to the pet, no journey needed. Touches from the pet show up there.
 3. Pick the walking route and start the journey. When Mahim fires, the story card says
    "Playing on your pet", Serial shows `now_showing`, `haptic` and `play`, and the card's
@@ -63,7 +63,7 @@ try `s` twice, raise the volume, and check the earphones are out.
 
 ## Step 1c: Bluetooth speaker test
 
-Makes the board an ordinary Bluetooth speaker called **PiF Pet Speaker**, to test the
+Makes the board an ordinary Bluetooth speaker called **Jam Pet Speaker**, to test the
 speaker and audio path with any sound. This uses Classic Bluetooth audio (like earbuds), not
 the app's Bluetooth LE protocol, so the app can't drive it.
 
@@ -72,7 +72,7 @@ the app's Bluetooth LE protocol, so the app can't drive it.
 2. Tools → Partition Scheme → **Huge APP (3MB No OTA/1MB SPIFFS)**. Classic Bluetooth audio
    is too big for the default partition.
 3. Upload `bt_speaker_test/bt_speaker_test.ino`, unplug the earphones.
-4. On the laptop: Bluetooth settings → add device → **PiF Pet Speaker**. Pick it as the sound
+4. On the laptop: Bluetooth settings → add device → **Jam Pet Speaker**. Pick it as the sound
    output and play anything. Serial Monitor: `+` / `-` volume, `s` speaker amp on/off.
 
 ## Step 1d: Display + Bluetooth (phone GPS on the screen)
@@ -85,9 +85,9 @@ works. 21 also switches the speaker amp, so before audio is added, move DC to **
 **Libraries:** install **Adafruit ST7735 and ST7789 Library** from the Library Manager (it
 asks to install Adafruit GFX too: say yes). NimBLE-Arduino as before.
 
-1. Flash `pet_display_test/pet_display_test.ino`. The screen shows "PiF Pet · waiting...".
+1. Flash `pet_display_test/pet_display_test.ino`. The screen shows "Jam Pet · waiting...".
 2. Open the web app in Chrome (laptop: http://localhost:5173; phone: `npm run dev:phone`), tap
-   **Pair a pet** → **PiF Pet**. The screen says "connected".
+   **Pair a pet** → **Jam Pet**. The screen says "connected".
 3. In **Test the pet**, switch on **Show my location on the pet**. Allow location. Your
    coordinates and accuracy appear on the screen, updating about once a second.
 4. Tap Play on a story: the place and title replace the coordinates, with a progress bar.

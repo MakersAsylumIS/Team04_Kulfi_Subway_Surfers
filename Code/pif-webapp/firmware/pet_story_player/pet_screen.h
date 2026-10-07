@@ -97,7 +97,7 @@ void screenDraw(const ScreenModel& m, uint8_t) {
   // 128x64 is small enough to redraw whole: about 1 KB over I2C.
   oled.clearBuffer();
   oled.setFont(u8g2_font_6x10_tf);
-  oled.drawStr(0, 9, "PiF Pet");
+  oled.drawStr(0, 9, "Jam Pet");
   oled.drawStr(m.connected ? 74 : 68, 9, m.connected ? "connected" : "waiting..");
   oled.drawHLine(0, 12, 128);
   if (m.place.length() == 0) {

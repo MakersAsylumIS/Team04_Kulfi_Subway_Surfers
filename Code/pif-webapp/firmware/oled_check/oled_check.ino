@@ -41,7 +41,7 @@ void setup() {
 void loop() {
   static uint32_t n = 0;
   oled.clearBuffer();
-  oled.drawStr(0, 10, "PiF Pet OLED check");
+  oled.drawStr(0, 10, "Jam Pet OLED check");
   oled.drawHLine(0, 13, 128);
   oled.drawStr(0, 30, "If you can read this,");
   oled.drawStr(0, 42, "the OLED works.");

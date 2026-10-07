@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" width="1000" height="620" font-family="Arial, Helvetica, sans-serif">
-  <title>The pet: circuit (Play it Forward, Team Subway Surfers)</title>
+  <title>The pet: circuit (Jam, Team Subway Surfers)</title>
   <rect width="1000" height="620" fill="#ffffff"/>
   <text x="500" y="34" text-anchor="middle" font-size="22" font-weight="bold" fill="#111">The pet: circuit</text>
   <text x="500" y="56" text-anchor="middle" font-size="13" fill="#555">ESP32-A1S Audio Kit v2.2 + 2.4" ST7789 TFT + speaker + volume button  ·  CERN-OHL-S-2.0</text>

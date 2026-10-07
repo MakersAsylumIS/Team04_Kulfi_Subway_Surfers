@@ -37,7 +37,7 @@ enum PlaybackState : uint8_t { STATE_IDLE = 0, STATE_PLAYING = 1, STATE_PAUSED =
 enum TransportCmd : uint8_t { CMD_RESUME = 0, CMD_PAUSE = 1, CMD_STOP = 2, CMD_VOLUME = 3, CMD_OUTPUT = 4 };
 enum InputEvent : uint8_t { INPUT_PAT = 1, INPUT_DOUBLE_PAT = 2 };
 
-#define PET_NAME           "PiF Pet"
+#define PET_NAME           "Jam Pet"
 #define FAKE_STORY_SECONDS 40
 
 // ---------- State ----------
@@ -170,7 +170,7 @@ UartRxCallbacks uartRxCallbacks;
 void setup() {
   Serial.begin(115200);
   delay(300);
-  Serial.println("\nPiF pet Bluetooth test");
+  Serial.println("\nJam pet Bluetooth test");
 
   NimBLEDevice::init(PET_NAME);
   NimBLEDevice::setMTU(185);  // room for now_showing (80 B) in one write

@@ -65,7 +65,7 @@ export function ProductApp() {
               </p>
             </>
           ) : (
-            <p className="font-display text-xl leading-tight font-bold">Play it Forward</p>
+            <p className="font-display text-xl leading-tight font-bold">Jam</p>
           )}
         </div>
         <div className="pointer-events-auto flex flex-col items-end gap-2">

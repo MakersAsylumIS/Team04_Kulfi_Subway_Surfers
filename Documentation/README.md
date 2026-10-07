@@ -1,6 +1,6 @@
 # Documentation
 
-How Play it Forward works, how to use and build every part of it, why it's built the way it
+How Jam works, how to use and build every part of it, why it's built the way it
 is, and what we learned. Licence: CC BY 4.0 (see [LICENSE.md](../LICENSE.md)).
 
 **Team:** Gayatri Sapre, Avantika Rikhye, Aarya Rokade. Mentor: Kushal.
@@ -32,7 +32,7 @@ is, and what we learned. Licence: CC BY 4.0 (see [LICENSE.md](../LICENSE.md)).
 *We cross paths with thousands of people and hundreds of places every day, and know almost
 nothing about any of them.*
 
-Play it Forward is for people who travel the same Mumbai corridors every day. As they pass a
+Jam is for people who travel the same Mumbai corridors every day. As they pass a
 place, they hear a 40-second-or-so story about it: what was there before the road, what
 happened there, what everyone walks past. It's **place-based**, not transport-based: near
 Bandra, by train, bus or on foot, you hear about Bandra.

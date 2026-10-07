@@ -137,7 +137,7 @@ function StartScreen({
     <main className="mx-auto flex min-h-dvh max-w-md flex-col px-5 pt-10 pb-8">
       <header>
         <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
-          Play it Forward
+          Jam
           <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-800">Debug</span>
         </h1>
         <p className="mt-3 text-lg leading-snug text-stone-600">

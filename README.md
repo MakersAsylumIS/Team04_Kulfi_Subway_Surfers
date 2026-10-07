@@ -2,12 +2,13 @@
 ## 2026 Week 40 COHORT 06
 ## Team : SUBWAY SURFERS
 
-# Play it Forward: stories of the places you pass
+# Jam: stories of the places you pass
 
 > *We cross paths with thousands of people and hundreds of places every day, and know almost
 > nothing about any of them.*
 
-**Play it Forward** is a location-triggered story app for Mumbai commuters. As you travel a
+**Jam** is a location-triggered story app for Mumbai commuters, made by Team Subway Surfers
+during the Play it Forward residency. As you travel a
 train corridor, it notices the places you're passing and plays a short story about each one:
 what was there before the road, what happened there, what everyone walks past every day.
 
