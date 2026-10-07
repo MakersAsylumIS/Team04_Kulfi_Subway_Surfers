@@ -12,6 +12,12 @@ Datasheets, libraries, specifications and guides we relied on. What we verified 
 | ESP32 Arduino core | <https://github.com/espressif/arduino-esp32> | Board package; we use 3.3.x |
 | ESP32-A1S Audio Kit pin definitions | the `AudioKitEs8388V1` board in [arduino-audio-driver](https://github.com/pschatzmann/arduino-audio-driver) | Several revisions of this board exist with different pins; V1 is ours |
 
+## Enclosure
+
+| What | Link | Notes |
+|---|---|---|
+| ESP32 D1 Mini Snap-Together Case, by bkgoodman | <https://www.printables.com/model/84791-esp32-d1-mini-snap-together-case> | The design our enclosure is built on. CC BY-NC: credit the author, non-commercial use only. |
+
 ## Firmware libraries
 
 | Library | Link | Used for |

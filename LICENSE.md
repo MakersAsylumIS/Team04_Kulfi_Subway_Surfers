@@ -6,7 +6,8 @@ residency (Kulfi Collective × Makers Asylum).
 | What | Licence | Covers |
 |---|---|---|
 | **Software** | [MIT](#mit-licence) | Everything in `Code/`: the web app, the pet's firmware, the lab and media tools, the scripts |
-| **Hardware** | [CERN-OHL-S-2.0](https://spdx.org/licenses/CERN-OHL-S-2.0.html) (strongly reciprocal) | `Electronics/` and `CAD/`: wiring, pin maps, circuit and mechanical designs |
+| **Hardware** | [CERN-OHL-S-2.0](https://spdx.org/licenses/CERN-OHL-S-2.0.html) (strongly reciprocal) | `Electronics/`: wiring, pin maps, the circuit |
+| **Enclosure** | [CC BY-NC](https://creativecommons.org/licenses/by-nc/4.0/) | `CAD/`: adapted from a CC BY-NC model, so it keeps that licence (see [Third-party notices](#third-party-notices)) |
 | **Documentation and media** | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) | `Documentation/`, every `.md` file, `Photos_Videos/`, the pet's face artwork, the team's animation and story texts |
 
 Third-party parts are **not** covered by these licences and keep their own: see
@@ -55,6 +56,7 @@ Full text: <https://creativecommons.org/licenses/by/4.0/legalcode>.
 
 | What | Where | Source and licence |
 |---|---|---|
+| Enclosure design (base and front), adapted | `CAD/` | Built on [ESP32 D1 Mini Snap-Together Case](https://www.printables.com/model/84791-esp32-d1-mini-snap-together-case) by [bkgoodman](https://www.printables.com/@bkgoodman_108348), Printables, [CC BY-NC](https://creativecommons.org/licenses/by-nc/4.0/). Our adapted files are shared under the same terms: attribution, non-commercial. |
 | FreeSans / FreeSansBold bitmap fonts | `Code/pif-webapp/src/lab/gfxFonts.json` (converted by `scripts/convert-gfx-fonts.mjs`) | From the [Adafruit GFX Library](https://github.com/adafruit/Adafruit-GFX-Library) (BSD licence), converted from [GNU FreeFont](https://www.gnu.org/software/freefont/) (GPLv3 or later, with the font exception). Used so the lab draws text exactly as the pet does. |
 
 ### Used, not included (installed separately)

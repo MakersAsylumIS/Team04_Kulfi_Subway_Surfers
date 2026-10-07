@@ -1,6 +1,18 @@
 # CAD
 
-Mechanical designs: the pet's enclosure. Licence: CERN-OHL-S-2.0 (see [LICENSE.md](../LICENSE.md)).
+Mechanical designs: the pet's enclosure.
+
+## Built on
+
+The enclosure is built on top of
+**[ESP32 D1 Mini Snap-Together Case](https://www.printables.com/model/84791-esp32-d1-mini-snap-together-case)** by **[bkgoodman](https://www.printables.com/@bkgoodman_108348)** on Printables,
+licensed **[Creative Commons Attribution-NonCommercial](https://creativecommons.org/licenses/by-nc/4.0/)** (CC BY-NC). We adapted its
+snap-together design to fit the ESP32-A1S Audio Kit, the 2.4" screen and the speaker.
+
+**Licence of the files in this folder: CC BY-NC**, because they're adapted from that model:
+credit bkgoodman's original (and us for the changes), and don't use them commercially. This is
+the one exception to the hardware licence (CERN-OHL-S-2.0), which covers `Electronics/`; see
+[LICENSE.md](../LICENSE.md).
 
 ## The enclosure (work in progress)
 

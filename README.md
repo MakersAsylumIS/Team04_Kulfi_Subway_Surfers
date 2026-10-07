@@ -85,7 +85,7 @@ Phil Schatzmann's `arduino-audio-tools` and `arduino-audio-driver` (from GitHub)
 |---|---|
 | [`Code/`](Code) | All software. `pif-webapp/` is the app, the pet's firmware, the lab and media tools, and the converter scripts. `Local_Host/` is the standalone TFT Web Lab. See [Code/README.md](Code/README.md). |
 | [`Electronics/`](Electronics) | Block diagram, pin map, wiring, DIP switches, buttons, power. |
-| [`CAD/`](CAD) | The pet's enclosure: base and front (STL), work in progress. |
+| [`CAD/`](CAD) | The pet's enclosure: base and front (STL), built on bkgoodman's [ESP32 D1 Mini Snap-Together Case](https://www.printables.com/model/84791-esp32-d1-mini-snap-together-case) (CC BY-NC). |
 | [`Documentation/`](Documentation) | How it works and guides for every part; the [engineering log](Documentation/ENGINEERING-LOG.md), [research](Documentation/RESEARCH.md), [decisions](Documentation/DECISIONS.md), [platform constraints](Documentation/PLATFORM-CONSTRAINTS.md), [troubleshooting](Documentation/TROUBLESHOOTING.md) and [open questions](Documentation/OPEN-QUESTIONS.md). |
 | [`Photos_Videos/`](Photos_Videos) | Prototype photos and videos; the pet's face animation frames (`Images/Animation.zip`). |
 | [`Reference_Data/`](Reference_Data) | Datasheets, libraries and web specs we relied on. |
@@ -122,7 +122,8 @@ MIT open source [license](http://opensource.org/licenses/MIT).
 #### Documentation:
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
 
-Third-party libraries, fonts and map data keep their own licences: see [LICENSE.md](LICENSE.md).
+The enclosure in `CAD/` is adapted from a CC BY-NC model, so it is **CC BY-NC** (non-commercial), not
+CERN-OHL-S. Third-party libraries, fonts and map data keep their own licences: see [LICENSE.md](LICENSE.md).
 
 ---
 
