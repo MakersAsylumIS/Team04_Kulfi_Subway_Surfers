@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 620" width="1000" height="620" font-family="Arial, Helvetica, sans-serif">
+  <title>The pet: circuit (Play it Forward, Team Subway Surfers)</title>
+  <rect width="1000" height="620" fill="#ffffff"/>
+  <text x="500" y="34" text-anchor="middle" font-size="22" font-weight="bold" fill="#111">The pet: circuit</text>
+  <text x="500" y="56" text-anchor="middle" font-size="13" fill="#555">ESP32-A1S Audio Kit v2.2 + 2.4" ST7789 TFT + speaker + volume button  ·  CERN-OHL-S-2.0</text>
+
+  <!-- ===== TFT module ===== -->
+  <rect x="40" y="90" width="170" height="320" rx="8" fill="#eef6ff" stroke="#3b6ea5" stroke-width="2"/>
+  <text x="125" y="116" text-anchor="middle" font-size="15" font-weight="bold" fill="#1d3f66">2.4" TFT</text>
+  <text x="125" y="134" text-anchor="middle" font-size="12" fill="#1d3f66">240×320, ST7789</text>
+  <rect x="62" y="150" width="96" height="70" fill="#1d3f66" opacity="0.15"/>
+  <text x="110" y="190" text-anchor="middle" font-size="11" fill="#1d3f66">screen</text>
+  <g font-size="13" fill="#111" text-anchor="end">
+    <text x="200" y="244">VCC</text>
+    <text x="200" y="266">GND</text>
+    <text x="200" y="288">LED</text>
+    <text x="200" y="310">SCK</text>
+    <text x="200" y="332">SDI</text>
+    <text x="200" y="354">CS</text>
+    <text x="200" y="376">DC</text>
+    <text x="200" y="398">RESET</text>
+  </g>
+
+  <!-- ===== Board ===== -->
+  <rect x="380" y="90" width="330" height="430" rx="10" fill="#f4f8f1" stroke="#3d7a35" stroke-width="2"/>
+  <text x="545" y="116" text-anchor="middle" font-size="15" font-weight="bold" fill="#244a1f">ESP32-A1S Audio Kit v2.2</text>
+  <text x="545" y="134" text-anchor="middle" font-size="12" fill="#244a1f">ESP32 · 4 MB flash · 4 MB PSRAM · Bluetooth LE</text>
+  <g font-size="13" fill="#111">
+    <text x="392" y="244">3V3</text>
+    <text x="392" y="266">GND</text>
+    <text x="392" y="310">IO18</text>
+    <text x="392" y="332">IO23</text>
+    <text x="392" y="354">IO5</text>
+    <text x="392" y="376">IO22</text>
+    <text x="392" y="398">EN (RST)</text>
+  </g>
+  <g font-size="13" fill="#111" text-anchor="end">
+    <text x="700" y="186">MTDI (IO12)</text>
+    <text x="700" y="216">3V3</text>
+    <text x="700" y="290">ROUT +</text>
+    <text x="700" y="320">ROUT −</text>
+    <text x="700" y="410">BAT</text>
+  </g>
+  <!-- onboard parts -->
+  <g font-size="12" fill="#244a1f">
+    <rect x="480" y="150" width="130" height="34" rx="4" fill="#fff" stroke="#3d7a35"/>
+    <text x="545" y="171" text-anchor="middle">ES8388 codec + amp</text>
+    <rect x="480" y="226" width="130" height="50" rx="4" fill="#fff" stroke="#3d7a35"/>
+    <text x="545" y="246" text-anchor="middle">microSD slot</text>
+    <text x="545" y="264" text-anchor="middle" font-size="11">stories/  ·  media/</text>
+    <rect x="480" y="288" width="130" height="58" rx="4" fill="#fff" stroke="#3d7a35"/>
+    <text x="545" y="305" text-anchor="middle">DIP switches</text>
+    <text x="545" y="321" text-anchor="middle" font-size="11">1 OFF · 2 ON · 3 ON</text>
+    <text x="545" y="336" text-anchor="middle" font-size="11">4 OFF · 5 OFF</text>
+    <rect x="480" y="356" width="130" height="48" rx="4" fill="#fff" stroke="#3d7a35"/>
+    <text x="545" y="375" text-anchor="middle">KEY1 (IO36): power</text>
+    <text x="545" y="393" text-anchor="middle">KEY3 (IO19): story</text>
+    <rect x="480" y="420" width="130" height="30" rx="4" fill="#fff" stroke="#3d7a35"/>
+    <text x="545" y="440" text-anchor="middle">headphone jack</text>
+    <rect x="495" y="520" width="100" height="22" rx="4" fill="#fff" stroke="#3d7a35"/>
+    <text x="545" y="536" text-anchor="middle">micro-USB</text>
+  </g>
+
+  <!-- ===== Wires: display ===== -->
+  <g stroke-width="2.5" fill="none">
+    <path d="M210 240 H300 V240 H380" stroke="#d62728"/>                 <!-- VCC to 3V3 -->
+    <path d="M210 284 H300 V240" stroke="#d62728"/>                       <!-- LED to 3V3 -->
+    <path d="M210 262 H380" stroke="#222"/>                               <!-- GND -->
+    <path d="M210 306 H380" stroke="#ff7f0e"/>                            <!-- SCK -->
+    <path d="M210 328 H380" stroke="#1f77b4"/>                            <!-- SDI -->
+    <path d="M210 350 H380" stroke="#9467bd"/>                            <!-- CS -->
+    <path d="M210 372 H380" stroke="#2ca02c"/>                            <!-- DC -->
+    <path d="M210 394 H380" stroke="#8c564b"/>                            <!-- RESET -->
+  </g>
+  <circle cx="300" cy="240" r="4" fill="#d62728"/>
+  <g font-size="11" fill="#555">
+    <text x="295" y="232" text-anchor="end">3.3 V</text>
+    <text x="300" y="300">SPI clock</text>
+    <text x="300" y="322">SPI data</text>
+  </g>
+
+  <!-- ===== Volume button ===== -->
+  <g stroke-width="2.5" fill="none">
+    <path d="M710 182 H790 V196" stroke="#17becf"/>
+    <path d="M710 212 H790 V202" stroke="#d62728"/>
+  </g>
+  <g>
+    <line x1="778" y1="196" x2="802" y2="196" stroke="#111" stroke-width="2.5"/>
+    <line x1="778" y1="202" x2="802" y2="202" stroke="#111" stroke-width="2.5"/>
+    <text x="812" y="194" font-size="13" font-weight="bold" fill="#111">Volume button</text>
+    <text x="812" y="211" font-size="11" fill="#555">to 3.3 V, not GND: GPIO 12</text>
+    <text x="812" y="225" font-size="11" fill="#555">must be LOW at boot</text>
+  </g>
+
+  <!-- ===== Speaker ===== -->
+  <g stroke-width="2.5" fill="none">
+    <path d="M710 286 H800" stroke="#d62728"/>
+    <path d="M710 316 H800" stroke="#222"/>
+  </g>
+  <rect x="800" y="280" width="16" height="42" fill="#fff" stroke="#111" stroke-width="2"/>
+  <path d="M816 280 L846 262 V340 L816 322 Z" fill="#fff" stroke="#111" stroke-width="2"/>
+  <text x="858" y="298" font-size="13" font-weight="bold" fill="#111">Speaker</text>
+  <text x="858" y="315" font-size="11" fill="#555">4 Ω, 3 W</text>
+
+  <!-- ===== Battery (planned) ===== -->
+  <g stroke-width="2.5" fill="none" stroke-dasharray="7 5">
+    <path d="M710 406 H760" stroke="#d62728"/>
+    <path d="M800 406 H830" stroke="#d62728"/>
+  </g>
+  <line x1="760" y1="406" x2="796" y2="392" stroke="#111" stroke-width="2.5"/>
+  <circle cx="760" cy="406" r="3" fill="#111"/>
+  <circle cx="800" cy="406" r="3" fill="#111"/>
+  <text x="780" y="430" text-anchor="middle" font-size="11" fill="#555">switch</text>
+  <rect x="830" y="388" width="96" height="36" rx="4" fill="#fff8e6" stroke="#b07d12" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="878" y="404" text-anchor="middle" font-size="12" fill="#6b4c0a">Li-ion</text>
+  <text x="878" y="418" text-anchor="middle" font-size="11" fill="#6b4c0a">3.7 V 950 mAh</text>
+  <text x="878" y="442" text-anchor="middle" font-size="11" fill="#555">planned</text>
+
+  <!-- ===== USB ===== -->
+  <path d="M545 542 V580" stroke="#555" stroke-width="2.5" fill="none"/>
+  <text x="545" y="600" text-anchor="middle" font-size="12" fill="#333">to the laptop: power, upload, Serial Monitor (921600 baud), /lab and /media</text>
+
+  <!-- ===== Bluetooth ===== -->
+  <path d="M710 128 C760 110 800 110 840 128" stroke="#7f7f7f" stroke-width="2" stroke-dasharray="4 4" fill="none"/>
+  <text x="850" y="120" font-size="12" fill="#333">Bluetooth LE</text>
+  <text x="850" y="136" font-size="11" fill="#555">to the phone app</text>
+
+  <!-- ===== Legend ===== -->
+  <g font-size="11" fill="#333">
+    <text x="40" y="452" font-weight="bold">Wire colours</text>
+    <line x1="40" y1="466" x2="64" y2="466" stroke="#d62728" stroke-width="3"/><text x="70" y="470">3.3 V / +</text>
+    <line x1="140" y1="466" x2="164" y2="466" stroke="#222" stroke-width="3"/><text x="170" y="470">GND / −</text>
+    <line x1="40" y1="486" x2="64" y2="486" stroke="#ff7f0e" stroke-width="3"/><text x="70" y="490">SCK (IO18)</text>
+    <line x1="140" y1="486" x2="164" y2="486" stroke="#1f77b4" stroke-width="3"/><text x="170" y="490">SDI (IO23)</text>
+    <line x1="40" y1="506" x2="64" y2="506" stroke="#9467bd" stroke-width="3"/><text x="70" y="510">CS (IO5)</text>
+    <line x1="140" y1="506" x2="164" y2="506" stroke="#2ca02c" stroke-width="3"/><text x="170" y="510">DC (IO22)</text>
+    <line x1="40" y1="526" x2="64" y2="526" stroke="#8c564b" stroke-width="3"/><text x="70" y="530">RESET (EN)</text>
+    <line x1="140" y1="526" x2="164" y2="526" stroke="#17becf" stroke-width="3"/><text x="170" y="530">MTDI (IO12)</text>
+    <text x="40" y="556" fill="#555">Dashed: not wired yet.</text>
+    <text x="40" y="572" fill="#555">Keep the display off IO13/14/15 (the SD card's lines).</text>
+  </g>
+</svg>

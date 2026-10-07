@@ -8,6 +8,12 @@ The working source of truth for wiring is
 findings (what we verified, what bit us) are in
 [Code/pif-webapp/HARDWARE.md](../Code/pif-webapp/HARDWARE.md). This page is the overview.
 
+## Circuit
+
+![The pet: circuit](pet-circuit.png)
+
+Source: [pet-circuit.svg](pet-circuit.svg) (editable; the PNG is a render of it).
+
 ## Block diagram
 
 ```mermaid
