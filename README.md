@@ -15,6 +15,9 @@ It comes with an optional companion, **the pet**: a small object you carry, buil
 ESP32 audio board with a colour screen, a speaker and an SD card. It pairs with the phone over
 Bluetooth, plays the stories itself, shows where you are, and has a face that reacts to you.
 
+How we got here (fieldwork, the genre's graveyard, the reversals): [Documentation/RESEARCH.md](Documentation/RESEARCH.md)
+and [Documentation/ENGINEERING-LOG.md](Documentation/ENGINEERING-LOG.md).
+
 It's quiet and specific on purpose. The subject is a city people have stopped noticing, so
 there are no points, streaks, profiles or feeds.
 
@@ -82,7 +85,7 @@ Phil Schatzmann's `arduino-audio-tools` and `arduino-audio-driver` (from GitHub)
 | [`Code/`](Code) | All software. `pif-webapp/` is the app, the pet's firmware, the lab and media tools, and the converter scripts. `Local_Host/` is the standalone TFT Web Lab. See [Code/README.md](Code/README.md). |
 | [`Electronics/`](Electronics) | Block diagram, pin map, wiring, DIP switches, buttons, power. |
 | [`CAD/`](CAD) | Mechanical designs (enclosure): none yet. |
-| [`Documentation/`](Documentation) | User guides for every part, how it works, design decisions, status, lessons learned. |
+| [`Documentation/`](Documentation) | How it works and guides for every part; the [engineering log](Documentation/ENGINEERING-LOG.md), [research](Documentation/RESEARCH.md), [decisions](Documentation/DECISIONS.md), [platform constraints](Documentation/PLATFORM-CONSTRAINTS.md), [troubleshooting](Documentation/TROUBLESHOOTING.md) and [open questions](Documentation/OPEN-QUESTIONS.md). |
 | [`Photos_Videos/`](Photos_Videos) | Prototype photos and videos; the pet's face animation frames (`Images/Animation.zip`). |
 | [`Reference_Data/`](Reference_Data) | Datasheets, libraries and web specs we relied on. |
 | [`BOM.csv`](BOM.csv) | Bill of materials. |
@@ -123,8 +126,10 @@ Third-party libraries, fonts and map data keep their own licences: see [LICENSE.
 
 ## 📬 Contact/Team
 
-> _List team members and contact emails or GitHub profiles._
+**Team Subway Surfers:** Gayatri Sapre, Avantika Rikhye, Aarya Rokade
+
+**Mentor:** Kushal
+
 [@anool](https://github.com/Anool)
->
->
-> ---
+
+---

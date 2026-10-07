@@ -3,6 +3,18 @@
 How Play it Forward works, how to use and build every part of it, why it's built the way it
 is, and what we learned. Licence: CC BY 4.0 (see [LICENSE.md](../LICENSE.md)).
 
+**Team:** Gayatri Sapre, Avantika Rikhye, Aarya Rokade. Mentor: Kushal.
+
+| Document | Read it for |
+|---|---|
+| **This page** | How it works, and how to use and build every part |
+| [ENGINEERING-LOG.md](ENGINEERING-LOG.md) | The honest record: what we hit, what caused it, what fixed it, including the reversals and the days lost |
+| [RESEARCH.md](RESEARCH.md) | Fieldwork, the genre's graveyard, what the research told us, and how it shaped the product |
+| [DECISIONS.md](DECISIONS.md) | Every decision, why, what it cost, and which ones we reversed |
+| [PLATFORM-CONSTRAINTS.md](PLATFORM-CONSTRAINTS.md) | What browsers, phones and the board allow, and the design consequences |
+| [TROUBLESHOOTING.md](TROUBLESHOOTING.md) | Symptom → cause → fix, for the board, uploads, sound, screen, SD card, Bluetooth and the tools |
+| [OPEN-QUESTIONS.md](OPEN-QUESTIONS.md) | What's still undecided or untested, with the context to decide it |
+
 **Contents**
 
 1. [The idea](#1-the-idea)
@@ -268,7 +280,8 @@ The ones that shaped the project most:
 
 ## 5. Lessons learned and troubleshooting
 
-Most of these cost us hours; the full list is in [HARDWARE.md](../Code/pif-webapp/HARDWARE.md).
+The most common ones are below. Every symptom we hit, by category: [TROUBLESHOOTING.md](TROUBLESHOOTING.md);
+how we found them: [ENGINEERING-LOG.md](ENGINEERING-LOG.md); board details: [HARDWARE.md](../Code/pif-webapp/HARDWARE.md).
 
 | Symptom | Cause | Fix |
 |---|---|---|
@@ -288,6 +301,8 @@ Most of these cost us hours; the full list is in [HARDWARE.md](../Code/pif-webap
 
 ## 6. Status and what's next
 
+The full list, with context for each question: [OPEN-QUESTIONS.md](OPEN-QUESTIONS.md).
+
 Working: the app end to end (real GPS and simulation, map, stories, pairing with reconnect); the
 pet playing stories from its card on the app's command, its face and moods, three buttons and
 sleep; the pet screen lab with live mirroring; the media dashboard.
@@ -306,6 +321,7 @@ Next:
 
 | Document | What's in it |
 |---|---|
+| [ENGINEERING-LOG.md](ENGINEERING-LOG.md), [RESEARCH.md](RESEARCH.md), [DECISIONS.md](DECISIONS.md), [PLATFORM-CONSTRAINTS.md](PLATFORM-CONSTRAINTS.md), [TROUBLESHOOTING.md](TROUBLESHOOTING.md), [OPEN-QUESTIONS.md](OPEN-QUESTIONS.md) | The documents in this folder (see the table at the top) |
 | [Code/pif-webapp/README.md](../Code/pif-webapp/README.md) | Running the app, the pages, the layout |
 | [docs/FEATURES.md](../Code/pif-webapp/docs/FEATURES.md) | Every feature, its status, and the open decisions |
 | [docs/ARCHITECTURE.md](../Code/pif-webapp/docs/ARCHITECTURE.md) | Module map, contracts, simulation, web limits, porting to native, scaling, decisions log |
