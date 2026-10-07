@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Service worker build output
+dev-dist
+
+# Not in the public repository: no rights to share, or placeholders (see README)
+public/audio/*.mp3
+firmware/sd-card/stories/*.wav
+assets/pet-boot/crane-sheet.png
+src/pet/crane.json
+assets/pet-boot/up-in-the-sky.mp4
+public/media/up-in-the-sky.mp4
+firmware/sd-card/media/sky*

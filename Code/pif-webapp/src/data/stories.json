@@ -43,5 +43,20 @@
     "duration_s": 40,
     "source": "https://en.wikipedia.org/wiki/Mahim_Causeway",
     "approved": false
+  },
+  {
+    "id": "moira-in-moira",
+    "place": "Moira",
+    "title": "A test story for Moira",
+    "lat": 15.59481,
+    "lng": 73.83421,
+    "radius_m": 5000,
+    "segment": "test",
+    "text": "Once upon a time a girl in Goa saw an elephant. Her name was Moira. The elephant was very big. Suddenly the elephant started flying. She really wanted to pet him. But the Elephant fell on the her. However, because she was a princess, she lifted him up with her pinky finger. After that she simply walked away with her giraffe. Both of them built a parachute and flew away, and they all lived happily ever after.",
+    "audio": "moira-in-moira.mp3",
+    "icon_id": 4,
+    "duration_s": 42,
+    "source": "",
+    "approved": false
   }
 ]

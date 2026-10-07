@@ -6,10 +6,24 @@ import type { Fix } from '../position/types'
 
 // Plain Leaflet driven from effects: one map instance, layers updated in place.
 
-const INK = '#1c1917'
-const PLAYING = '#b45309'
-const QUIET = '#78716c'
+/** Colours for what the map draws. The debug tool uses the defaults; the product passes its theme. */
+export interface MapPalette {
+  heard: string
+  playing: string
+  unheard: string
+  me: string
+  path: string
+}
+const DEFAULT_PALETTE: MapPalette = {
+  heard: '#1c1917',
+  playing: '#b45309',
+  unheard: '#78716c',
+  me: '#2563eb',
+  path: '#1c1917',
+}
+// Street level by default; showcase places tens of metres apart need a closer view.
 const ZOOM = 15
+const CLOSE_ZOOM = 18
 
 interface Props {
   fix: Fix | null
@@ -20,10 +34,23 @@ interface Props {
   playingId: string | null
   /** Where to look before the first fix arrives. */
   fallbackCenter: [number, number]
+  /** Zoom in close when stories are small and near each other (an office showcase). */
+  close?: boolean
+  /** Fill the parent instead of being a rounded card (the product's full-screen map). */
+  fill?: boolean
+  palette?: MapPalette
+  /** Space at the bottom (px) kept clear of the follow position, e.g. under a bottom sheet. */
+  bottomInset?: number
   children?: ReactNode
 }
 
-export function MapView({ fix, path, stories, revealed, heardIds, playingId, fallbackCenter, children }: Props) {
+export function MapView({ fix, path, stories, revealed, heardIds, playingId, fallbackCenter, close = false, fill = false, palette = DEFAULT_PALETTE, bottomInset = 0, children }: Props) {
+  const paletteRef = useRef(palette)
+  useEffect(() => {
+    paletteRef.current = palette
+  }, [palette])
+  const zoom = close ? CLOSE_ZOOM : ZOOM
+  const zoomRef = useRef(zoom)
   const elRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<L.Map | null>(null)
   const layersRef = useRef<{
@@ -40,21 +67,21 @@ export function MapView({ fix, path, stories, revealed, heardIds, playingId, fal
     if (!elRef.current) return
     const map = L.map(elRef.current, { zoomControl: false, attributionControl: true }).setView(
       fallbackRef.current,
-      ZOOM,
+      zoomRef.current,
     )
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
     }).addTo(map)
     layersRef.current = {
-      path: L.polyline([], { color: INK, weight: 4, opacity: 0.55 }).addTo(map),
+      path: L.polyline([], { color: paletteRef.current.path, weight: 4, opacity: 0.55 }).addTo(map),
       stories: L.layerGroup().addTo(map),
-      accuracy: L.circle([0, 0], { radius: 0, stroke: false, fillColor: '#2563eb', fillOpacity: 0.12 }),
+      accuracy: L.circle([0, 0], { radius: 0, stroke: false, fillColor: paletteRef.current.me, fillOpacity: 0.14 }),
       me: L.circleMarker([0, 0], {
         radius: 8,
         color: '#ffffff',
         weight: 3,
-        fillColor: '#2563eb',
+        fillColor: paletteRef.current.me,
         fillOpacity: 1,
       }),
     }
@@ -78,8 +105,21 @@ export function MapView({ fix, path, stories, revealed, heardIds, playingId, fal
     const ll: L.LatLngTuple = [fix.lat, fix.lng]
     layers.me.setLatLng(ll).addTo(map)
     layers.accuracy.setLatLng(ll).setRadius(fix.accuracy).addTo(map)
-    if (followingRef.current) map.panTo(ll, { animate: true })
-  }, [fix])
+    if (followingRef.current) {
+      // Keep your dot centred in the visible area above any bottom sheet.
+      const target = bottomInset ? map.unproject(map.project(ll).add([0, bottomInset / 2])) : L.latLng(ll)
+      map.panTo(target, { animate: true })
+    }
+  }, [fix, bottomInset])
+
+  // Theme changes recolour the path and your dot.
+  useEffect(() => {
+    const layers = layersRef.current
+    if (!layers) return
+    layers.path.setStyle({ color: palette.path })
+    layers.accuracy.setStyle({ fillColor: palette.me })
+    layers.me.setStyle({ fillColor: palette.me })
+  }, [palette])
 
   useEffect(() => {
     layersRef.current?.path.setLatLngs(path)
@@ -93,7 +133,7 @@ export function MapView({ fix, path, stories, revealed, heardIds, playingId, fal
       if (!revealed.has(story.id)) continue
       const playing = story.id === playingId
       const heard = heardIds.has(story.id)
-      const color = playing ? PLAYING : heard ? INK : QUIET
+      const color = playing ? palette.playing : heard ? palette.heard : palette.unheard
       L.circle([story.lat, story.lng], {
         radius: story.radius_m,
         color,
@@ -105,24 +145,25 @@ export function MapView({ fix, path, stories, revealed, heardIds, playingId, fal
         .bindTooltip(story.place, { permanent: true, direction: 'center', className: 'pif-story-label' })
         .addTo(group)
     }
-  }, [stories, revealed, heardIds, playingId])
+  }, [stories, revealed, heardIds, playingId, palette])
 
   const recenter = () => {
     followingRef.current = true
     setFollowing(true)
-    if (fix) mapRef.current?.setView([fix.lat, fix.lng], ZOOM)
+    if (fix) mapRef.current?.setView([fix.lat, fix.lng], zoom)
   }
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-stone-200">
-      <div ref={elRef} className="h-[46dvh] min-h-64 w-full bg-stone-200" aria-label="Map" />
+    <div className={fill ? 'relative h-full w-full' : 'relative overflow-hidden rounded-2xl border border-stone-200'}>
+      <div ref={elRef} className={fill ? 'pif-map h-full w-full' : 'pif-map h-[46dvh] min-h-64 w-full bg-stone-200'} aria-label="Map" />
       {/* Overlay sits above Leaflet's panes (z-index up to 1000). */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-[1000] p-3">{children}</div>
       {!following && (
         <button
           type="button"
           onClick={recenter}
-          className="absolute right-3 bottom-8 z-[1000] rounded-full bg-white px-4 py-3 text-base font-medium shadow-md active:bg-stone-100"
+          className="absolute right-3 z-[1000] rounded-full bg-white px-4 py-3 text-base font-medium text-stone-900 shadow-md active:bg-stone-100"
+          style={{ bottom: bottomInset + 24 }}
         >
           Recenter
         </button>

@@ -43,7 +43,7 @@ Two known-good configurations:
 | Flash size | 4MB | 4MB |
 | Partition | Huge APP (3MB No OTA) | Huge APP |
 | Upload speed | 921600 | 921600 |
-| Monitor baud | 115200 | 115200 |
+| Monitor baud | 115200 | 115200 for the test sketches; **921600 for `pet_story_player`** (since 2026-10-06) |
 
 There is **no "ESP32-A1S" entry in the board manager** and there never will be.
 
@@ -139,6 +139,9 @@ ZIP, extract into `Documents/Arduino/libraries/`, and **rename the folders to dr
 For BLE use **NimBLE-Arduino**, not the stock ESP32 BLE stack — much smaller, and flash
 is tight next to an audio pipeline.
 
+From the Library Manager: **NimBLE-Arduino**, **Adafruit ST7735 and ST7789 Library** (+ Adafruit
+GFX), **JPEGDEC** by Larry Bank (video), and **U8g2** (only for the OLED test build).
+
 **Prefer the library's bundled examples over hand-written sketches.** They are
 version-matched to whatever you installed, which kills a whole class of API-drift
 compile errors. Adapt them; don't write from scratch.
@@ -147,32 +150,37 @@ compile errors. Adapt them; don't write from scratch.
 
 ## 6. Pin map
 
+The wiring as built, wire by wire: **[firmware/WIRING.md](./firmware/WIRING.md)**.
+
 | Function | Pins | Status |
 |---|---|---|
 | I2C — codec control | SDA **33**, SCL **32** | **VERIFIED** |
 | I2S — audio | MCLK **0**, BCK **27**, WS **25**, DOUT **26**, DIN **35** | From maintainer, consistent with working audio |
-| SD card | CS **13**, MISO **2**, MOSI **15**, CLK **14** | From docs, UNTESTED |
-| PA enable (speaker amp) | **21** | From maintainer, UNTESTED |
-| Onboard LED | **22** | From maintainer, UNTESTED |
-| Headphone detect / line-in detect | **39** / **12** | From the arduino-audio-driver V1 pin file, UNTESTED |
-| Onboard keys KEY1 to KEY6 | 36, 13, 19, 23, 18, 5 | From the arduino-audio-driver V1 pin file, UNTESTED |
+| SD card | CS **13**, MISO **2**, MOSI **15**, CLK **14**; DIP switches 2 and 3 ON | **VERIFIED** (mounts at up to 20 MHz on its own bus) |
+| PA enable (speaker amp) | **21** | **VERIFIED** (speaker on ROUT) |
+| Onboard LED | **22** | Now the display's DC line; the LED just flickers |
+| Headphone detect | **39** | From the arduino-audio-driver V1 pin file |
+| Onboard keys KEY1 to KEY6 | 36, 13, 19, 23, 18, 5 | **VERIFIED** with `firmware/key_check` (2026-10-05) |
+| Display (ST7789 TFT, own SPI bus) | SCK **18**, MOSI **23**, CS **5**, DC **22**, RST → EN | **VERIFIED** |
+| Extra button | MTDI (**12**) to 3.3 V, internal pull-down | **VERIFIED** (strapping pin: must be LOW at boot) |
 | Input-only, cannot drive anything | 34, 35, 36, 39 | ESP32 hardware fact |
 
 ### Consequences
 
 - **GPIO0 is the codec master clock AND the boot strap pin.** It is permanently gone,
   and it is why uploads sometimes need the BOOT key held (see section 8).
-- **GPIO13 is shared between the SD card and KEY2.** You get the card or that button.
-- **The IMU can share the codec's I2C bus** — different address, zero extra pins.
-- **Capacitive touch is probably unavailable.** ESP32 touch pins are 0, 2, 4, 12, 13, 14,
-  15, 27, 32, 33 — this board has claimed nearly all of them. GPIO4 may survive. If not,
-  use one of the six onboard buttons instead of a pat pad.
-- **Round display goes on the other SPI bus** (18/19/23/5 are likely free since the codec
-  took 32/33 rather than the usual 21/22 — VERIFY against the schematic). You can get
-  the GC9A01 down to **three pins**: tie CS to ground (it's alone on the bus) and RST to
-  board reset, leaving SCK, MOSI, DC.
-
-**Do a full pin budget on paper against the schematic before soldering anything.**
+- **GPIO13 is shared between the SD card and KEY2.** You get the card or that button
+  (DIP switch 1 OFF keeps the key off the card's line).
+- **The display can't share the SD card's bus.** Tried on 2026-10-05 (display on MTMS/MTDO,
+  i.e. the card's clock and command lines): the extra wiring made the card fail to mount or
+  read. It's back on its own pins, which costs KEY4 (23) and KEY5 (18).
+- **Only two onboard keys are free** (KEY1, KEY3); a third button lives on MTDI (12), wired
+  to 3.3 V, because GPIO 12 sets the flash voltage at boot and must read LOW then.
+- **No free analog (ADC) pin is broken out**, so a potentiometer for volume isn't possible
+  without an external ADC; volume is a button (tap up, hold down).
+- **Capacitive touch is unavailable**: every touch-capable pin that's broken out is taken.
+- **The IMU can share the codec's I2C bus** — different address, zero extra pins (not on the
+  headers, though).
 
 ---
 
@@ -222,7 +230,8 @@ bring-up, or press RST with the monitor already open.
   40 seconds at 16kHz mono ≈ 1.3MB, so 30 stories ≈ 40MB. The card doesn't care.
 - **Web app uses MP3** — same recordings, different export. Shipping WAVs to a browser
   wastes tens of megabytes for no benefit.
-- Convert: `ffmpeg -i in.m4a -ar 44100 -ac 2 -c:a pcm_s16le out.wav`
+- Convert: `ffmpeg -i in.mp3 -ac 1 -ar 22050 -c:a pcm_s16le out.wav` (mono 22050 Hz is plenty for
+  speech; 24-bit and 32-bit float WAVs, common export defaults, won't play)
 - For the prototype, **copy files to the SD with a card reader.** Don't build wifi sync.
 
 ---
@@ -247,20 +256,28 @@ tone plays, and listen for stutter.
 
 ### Display
 
-> **Parts changed (2026-10-03):** the display is now a rectangular 2.4" 240×320 colour TFT on SPI, driven as an **ST7789** (the group's working face code; the product page claims ILI9341), not the round GC9A01. Wiring and pin budget: [docs/FEATURES.md section 7](./docs/FEATURES.md#7-assembling-the-pet-from-the-parts-you-have). The library advice below still applies.
+The display is a rectangular **2.4" 240×320 colour TFT driven as an ST7789** (the product page
+claims ILI9341; the ST7789 driver is what works), on its own SPI bus at 20 MHz, through the
+**Adafruit ST7789 + GFX** libraries. (The original plan was a round GC9A01; the parts changed on
+2026-10-03.) **Avoid LVGL**: heavy, a memory hog next to an audio pipeline, and a face wants
+drawing primitives, not widgets.
 
-Drive the GC9A01 with **Arduino_GFX** or **TFT_eSPI**. **Avoid LVGL** — heavy dependency,
-memory hog next to an audio pipeline, and a face wants drawing primitives, not widgets.
+Colour inversion: `pet_screen.h` turns it **off** (`invertDisplay(false)`). The team's
+`Code/Local_Host` bridge notes that its panel needs it **on**; if colours look like a negative
+(black shows white, cyan shows red), flip that one line.
 
-Three states:
+What the screen shows (`pet_screen.h`):
 
 | State | Display | Entered by |
 |---|---|---|
-| `IDLE` | The face. Slow blink, occasional glance. Reacts to a pat. | Boot, and when a story ends |
-| `PLAYING` | Place name, story title, progress arc around the rim | BLE `play` from the browser |
-| `GREET` | Peer encounter | Stubbed — a second pet switches it on |
+| Idle | The face (7 moods, blinking), the place and a status line under it | Boot, and when a story ends |
+| Story | "NOW PLAYING" / "PAUSED", place, title, progress bar, times | BLE `play` from the browser |
+| Lab / media | Whatever the pet screen lab or a `/media` video draws | USB from the lab or dashboard |
 
-The round form makes a **radial progress ring** the obvious affordance. Use it.
+Moods: Normal (blinks), Heart_Eyes on arrival or a pat, Sad on disconnect or a missing file,
+Bored after 2 min, Sleepy after 4, screen off after 6. Portrait (240×320, `setRotation(2)`)
+is the planned way to hold it; the pet's own screens are still laid out landscape, and the
+portrait designs live in the lab (`/lab`) until they're ported.
 
 ### BLE — pet is the peripheral
 
@@ -297,14 +314,16 @@ don't need to be understood, only noticed.
 
 ## 11. Still unverified — do these before relying on them
 
-- [ ] SD card mounts, and the DIP switch positions that make it work
-- [ ] WAV playback from SD without dropouts
-- [ ] BLE advertising and GATT while audio is playing
-- [ ] Which GPIOs are physically broken out on the headers, for the display
-- [ ] Whether capacitive touch has any pin left
-- [ ] Onboard mics (check for the capacitor fault)
-- [ ] Speaker output via the PA pin — and whether we even have speakers
-- [ ] Battery operation and runtime
+- [x] SD card mounts, and the DIP switch positions that make it work (1 OFF, 2 ON, 3 ON, 4 OFF, 5 OFF)
+- [x] WAV playback from SD without dropouts (16-bit PCM, mono 22050 Hz)
+- [x] BLE advertising and GATT while audio is playing (`pet_story_player`, 2026-10-04)
+- [x] Which GPIOs are physically broken out on the headers, for the display (see section 6)
+- [x] Whether capacitive touch has any pin left (no)
+- [ ] Onboard mics (check for the capacitor fault) — not needed so far
+- [x] Speaker output via the PA pin (4 Ω 3 W speaker on ROUT; 0.9 volume = 0 dB, louder distorts)
+- [ ] Battery operation and runtime (3.7 V 950 mAh cell on hand, not wired yet)
+- [ ] MJPEG video from `/media` with sound on the real board (code builds; not yet run)
+- [ ] Colour inversion on/off for our panel, confirmed by eye
 
 ---
 
@@ -313,11 +332,14 @@ don't need to be understood, only noticed.
 1. ~~Identify the board~~ — **done**, ES8388 @ 0x10
 2. ~~Tone out of the headphone jack~~ — **done**, V1 + setVolume
 3. ~~PSRAM on~~ — **done**, Wrover profile
-4. Display shows anything at all
-5. The face — IDLE state. Worth real time; it's what people remember holding.
-6. Pat or button wakes it, motor buzzes
-7. WAV off the SD card, buffered through PSRAM, audio on its own core
-8. BLE peripheral — test with nRF Connect before involving the browser
-9. **BLE while audio plays** — do this early, not late
-10. Browser drives it end to end
-11. Peer module, stubbed now, enabled if a second pet exists
+4. ~~Display shows anything at all~~ — **done**, ST7789 on its own SPI bus
+5. ~~The face — idle state~~ — **done**, 7 moods from the group's PNGs
+6. ~~Buttons~~ — **done**: KEY1 power/sleep, KEY3 story, MTDI volume (no motor yet)
+7. ~~WAV off the SD card, audio on its own core~~ — **done**
+8. ~~BLE peripheral~~ — **done**, tested with nRF Connect first
+9. ~~BLE while audio plays~~ — **done**
+10. ~~Browser drives it end to end~~ — **done** (app → pet plays the story, shows place and progress)
+11. Video from the SD card with sound (`pet_media.h`) — built, to be tried on the board
+12. Battery and a power switch
+13. Portrait screen designs from the lab, ported to `pet_screen.h`
+14. Peer module, stubbed, enabled if a second pet exists

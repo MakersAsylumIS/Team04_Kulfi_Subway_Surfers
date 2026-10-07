@@ -1,6 +1,11 @@
-﻿Name of the Material/Component,Quantity,Reference Link,Additional Note
-,,,
-,,,
-,,,
-,,,
-,,,
+Name of the Material/Component,Quantity,Reference Link,Additional Note
+Ai-Thinker ESP32-A1S Audio Kit v2.2 (ES8388 codec),1,,"The pet's main board: ESP32 with 4 MB flash and 4 MB PSRAM, ES8388 codec, speaker amp, headphone jack, microSD slot, CP2102 USB. Bought from Probots (Rs 2,499). Several look-alike revisions exist; see HARDWARE.md"
+2.4 inch 240x320 SPI colour TFT (ST7789 driver),1,,"The pet's screen. Sold as ILI9341; works with the ST7789 driver. Wired to its own SPI bus (see Electronics/README.md)"
+Speaker 4 ohm 3 W,1,,On the board's ROUT terminals
+microSD card,1,,"FAT32. Holds stories/ (WAV) and media/ (MJPEG + WAV)"
+Tactile push button,1,,"Volume button on MTDI (GPIO 12), wired to 3.3 V. Two more can go across KEY1 and KEY3"
+Li-ion battery 3.7 V 950 mAh (3-pin connector),1,,Not wired yet
+Slide switch,1,,"Planned: on the battery's + wire, for a real off"
+Jumper wires (female-female),12,,Display and button wiring
+USB data cable (micro-USB),1,,"Must carry data, not charge only (our first blocker)"
+1.3 inch SH1106 128x64 I2C OLED,1,,"Optional: early test screen, used instead of the TFT (PET_SCREEN_OLED 1)"

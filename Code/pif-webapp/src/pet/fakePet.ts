@@ -15,6 +15,9 @@ export interface FakePetDisplay {
   durationS: number
   lastHaptic: number | null
   log: string[]
+  /** Same mood inputs as the firmware: when something last happened, and a short reaction. */
+  lastActivityAt: number
+  reaction: { mood: string; until: number } | null
 }
 
 const decoder = new TextDecoder()
@@ -36,6 +39,8 @@ export class FakePet implements PetLink {
     durationS: 0,
     lastHaptic: null,
     log: [],
+    lastActivityAt: Date.now(),
+    reaction: null,
   }
 
   constructor(stories: readonly Story[]) {
@@ -44,6 +49,7 @@ export class FakePet implements PetLink {
   }
 
   async write(char: CharName, bytes: Uint8Array) {
+    this.set({ lastActivityAt: Date.now() })
     const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
     if (char === 'play') {
       const offset = view.getUint16(0, true)
@@ -53,6 +59,7 @@ export class FakePet implements PetLink {
       this.stopTimer()
       if (duration === undefined) {
         this.set({ state: PlaybackState.missingFile, positionS: 0, durationS: 0 })
+        this.react('Sad', 2500)
       } else {
         this.set({ state: PlaybackState.playing, positionS: offset, durationS: duration })
         this.startTimer()
@@ -81,6 +88,8 @@ export class FakePet implements PetLink {
     } else if (char === 'haptic') {
       this.logLine(`haptic ${bytes[0]}`)
       this.set({ lastHaptic: bytes[0] })
+      // No motor yet: like the firmware, the face reacts to the arrival buzz instead.
+      this.react('Heart_Eyes', 3000)
     }
   }
 
@@ -103,6 +112,11 @@ export class FakePet implements PetLink {
   input(event: InputEventValue) {
     this.logLine(`input ${Object.keys(InputEvent).find((k) => InputEvent[k as keyof typeof InputEvent] === event)}`)
     this.notify.get('input')?.(new DataView(Uint8Array.of(event, 0).buffer))
+  }
+
+  /** Show a mood for a moment (the firmware's react()). */
+  react(mood: string, ms: number) {
+    this.set({ reaction: { mood, until: Date.now() + ms }, lastActivityAt: Date.now() })
   }
 
   watch(listener: (d: FakePetDisplay) => void): () => void {

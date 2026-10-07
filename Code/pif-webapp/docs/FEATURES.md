@@ -47,6 +47,79 @@ only? (Yes, it never leaves the phone. No accounts, per AGENTS.md.)
 
 ---
 
+## 2b. Showcase mode (built 2026-10-04)
+
+For the showcase, three spots in the venue become the three story places.
+
+- **Showcase places** on the Start screen: stand at a spot, tap **Mark here**. The app listens to GPS for 8 seconds, averages the most accurate fixes, and saves that as the story's position with a 10, 15, 25 or 40 m radius. Saved on the device (`src/data/places.ts`, `usePlaces.ts`, `ShowcaseSetup.tsx`). Overrides `stories.json` coordinates only on that device.
+- Warns when two places' circles overlap, or when a mark was less accurate than its radius.
+- Once two or more are marked, the simulator gets a **Walk: through the showcase places** route to rehearse indoors.
+- The map zooms to street level (zoom 18) when any story radius is 50 m or less.
+- **Limit:** phone GPS indoors is often only good to 10 to 50 m. Spots should be 50 m or more apart, ideally outdoors or near windows.
+
+## 2c. Visitor version at / (built 2026-10-04)
+
+`src/product/`. Full-screen map with the current place in a card at the top, theme and pet buttons top right, and one bottom sheet that follows the journey: Start journey, then Listening (next story and distance, End journey), then Now playing (place, title, progress, Pause, Skip, Read for the full text and source). Real GPS only, positions from `stories.json`.
+
+- **Themes:** light keeps the OpenStreetMap colours; dark turns the same tiles into a charcoal sketch with a CSS filter. Follows the phone by default; the top-right button cycles auto, light, dark (remembered). One accent: the pet's cyan (deeper teal on light for sunlight).
+- **Type:** Space Grotesk (Google Fonts) for place names and buttons.
+- `/debug` keeps the full testing tool.
+
+## 2d. Pet screen lab at /lab (built 2026-10-06)
+
+A page for trying pictures, frame animations, sprite sheets and videos on an exact stand-in
+for the pet's 240x320 screen. It covers portrait and landscape, size, alignment, nudge,
+rotation, the white-background removal, colour mode (full 16-bit, 16 colours, cyan only), fps
+and the "Play it Forward" name. It estimates flash space and drawing time on the board, and
+"Copy these settings" hands the exact choice to whoever converts it for the firmware. Code:
+`src/lab/` (loaded only on /lab).
+
+**Screens** (`src/lab/screens.ts`): draft portrait designs for every pet screen (startup,
+waiting, idle, arrival, now playing, paused, volume, not on card, sleeping), drawn with the
+pet's own Adafruit fonts (`src/lab/gfxFonts.json`, from `scripts/convert-gfx-fonts.mjs`) so
+they match the firmware pixel for pixel. Chosen designs get ported to `pet_screen.h`.
+
+**Layers** (`src/lab/layers.ts`): your own pictures (several at once = an animated layer, white
+background removable) and text in the pet's fonts, on top of any screen or media; drag on the
+preview to move, arrow keys to nudge, order/hide/delete in the list. A Blank screen starts from
+nothing.
+
+**Clips: play on the pet** (`src/lab/clip.ts`, `src/lab/audio.ts`, firmware `pet_lab.h`): a stretch of
+the lab's timeline (frames in/out, scrubber, fps, loop/once/back-and-forth), whatever the preview
+shows including layers, plus optional sound (any audio file, or a video's own track; trim, offset
+in ms, sample rate, volume), sent once over USB into the pet's PSRAM and played by the pet at full
+speed with the sound in sync. Only the part of the screen that changes is stored per frame
+(16-bit, or a 256/64/16-colour palette, run-length coded when smaller). fps, play mode, sound
+offset and volume change on the pet while it plays ("lab fps|mode|offset|vol"); USB speed
+("lab baud", falls back by itself) and display SPI speed ("lab spi") are set from the lab too.
+"Preview here" plays the same timing and the same resampled sound in the browser.
+
+**Live on the pet** (`src/lab/petSerial.ts`): with the pet on USB, Chrome/Edge send the lab's
+screen to the real panel over Web Serial at 921600 baud. Only changed row pieces are sent, run-
+length coded when smaller; each frame waits for the pet's "LABOK". The pet's side is "Lab mode" in
+`pet_screen.h`; it ends with "lab off" or 15 s after the last frame. On connect the lab restarts the
+pet (RTS pulse), waits for "Ready", then sends "lab hello" and expects "LABHELLO tft"; no answer
+means old firmware or a wrong baud rate, and the lab says so.
+
+Startup animation: tried with a crane sprite (2026-10-06), then taken out of the firmware;
+`scripts/convert-crane.mjs` and `src/pet/crane.json` stay for the lab's Crane source and Startup design.
+
+## 2e. Pet media dashboard at /media (built 2026-10-06)
+
+The simple way to play video and animation on the pet. Format: **MJPEG + WAV on the SD card**
+(`/media/<name>.mjpeg`, `.wav`, `.cfg`), the usual choice for ESP32 screens: full colour, small
+files (the sky video is 144 KB at 240 wide, 15 fps), decoded by the JPEGDEC library. The video
+loads into PSRAM, the sound streams from the card, and the sound is the clock (late frames are
+skipped, so picture and sound stay together). GIF was considered: 256 colours, slower to decode,
+no sound.
+
+The dashboard lists what's on the card, plays/stops it, and changes loop, fps, sound sync and
+volume while it plays, with the pet's own report of decode time and skipped frames. "Add a video
+or animation" converts a video (or a set of pictures) in the browser (width, fps, JPEG quality,
+trim, sound on/off and rate, upright/sideways, position, loop) and sends it over USB, or
+downloads the files for a card reader; the matching ffmpeg commands are shown too. Code:
+`src/lab/MediaDashboard.tsx`, `src/lab/convert.ts`; pet side `pet_media.h`.
+
 ## 3. Screens
 
 ### 3.1 Home (map-first): proposed, replaces today's Start screen

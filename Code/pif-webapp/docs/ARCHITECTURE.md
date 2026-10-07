@@ -56,8 +56,21 @@ src/
     FakePetPanel.tsx the fake pet's dial and Pat buttons             WEB ONLY
   map/
     MapView.tsx     Leaflet + OpenStreetMap: you, your path, stories WEB ONLY, rewrite per platform
-  App.tsx           Start and Journey screens (Tailwind, DOM)        WEB ONLY, rewrite per platform
+  product/
+    ProductApp.tsx  the visitor app at /: map, place card, sheet     WEB ONLY, rewrite per platform
+  App.tsx           the test tool at /debug                          WEB ONLY (developer tool)
+  lab/              pet tools (developer, desktop Chrome/Edge only)  WEB ONLY, not part of the product
+    PetLab.tsx        /lab: screen designs, layers, live mirror, clips
+    MediaDashboard.tsx /media: videos on the pet's SD card
+    petSerial.ts      USB link to the pet (Web Serial): frames, clips, files, commands
+    screens.ts        draft pet screens; gfxText.ts draws with the pet's own fonts
+    clip.ts audio.ts convert.ts  clip packing, sound prep, video → MJPEG/WAV
+main.tsx            picks /, /debug, /lab or /media (no router library)
 ```
+
+The pet's firmware side of the lab and media tools: `firmware/pet_story_player/pet_screen.h`
+("Lab mode": live frames), `pet_lab.h` (clips into PSRAM) and `pet_media.h` (MJPEG + WAV from
+the SD card). They use USB serial, not Bluetooth, and never run in the product.
 
 Not built yet (see the build steps in section 9): `history/`.
 
@@ -341,3 +354,11 @@ There is no test runner yet (adding one is a dependency decision). Until then:
 | 2026-10-03 | Pet display is a 2.4" ST7789 TFT on SPI (18/23/5/19); its resistive touch is not used | Parts on hand. Input is the capacitive touch switch (GPIO 34) and a button (GPIO 39). See FEATURES.md section 7. |
 | 2026-10-03 | Offline step deferred | Aarya: no real use for it right now. |
 | 2026-10-03 | Leaflet + OpenStreetMap for the map, not Google Maps | Free with no API key, allows offline caching, roads and rail are well mapped in Mumbai. Google is better for shop names, which the stories don't need. |
+| 2026-10-04 | Pet plays WAVs from its own SD card; the app sends only the story id | Audio never crosses Bluetooth; a missing file falls back to the phone. |
+| 2026-10-05 | Display back on its own SPI bus (SCK 18, MOSI 23, CS 5, DC 22, RST to EN) | Sharing the SD card's bus (to free 18/23) made the card unreadable. Supersedes the 2026-10-03 pins. |
+| 2026-10-05 | Three buttons, one job each: KEY1 power/sleep, KEY3 story (tap, double-tap, hold), MTDI volume | Only KEY1 (GPIO 36) can wake the chip from deep sleep; no free analog pin for a volume knob. |
+| 2026-10-06 | Pet screen will be held upright (portrait, 240×320) | Aarya. Designs are drafted in the lab first, then ported. |
+| 2026-10-06 | Pet tools in the web app (`/lab`, `/media`) over USB Web Serial, at 921600 baud | Design and test on the real screen without reflashing; Bluetooth is far too slow for pictures. |
+| 2026-10-06 | Video on the pet = MJPEG + WAV from the SD card (JPEGDEC library) | Full colour, small files, the sound as the clock. Streaming frames over USB couldn't look like video; GIF has no sound and fewer colours. |
+| 2026-10-07 | Startup animation removed from the firmware | It was a test; the stock sprite it used isn't ours to publish. |
+| 2026-10-07 | Published under MIT (software), CERN-OHL-S-2.0 (hardware), CC BY 4.0 (docs and media) | The residency's licences. Placeholder audio, a stock sprite and one test video are left out of the public repository. |

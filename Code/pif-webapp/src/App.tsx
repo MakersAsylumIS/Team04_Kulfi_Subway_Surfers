@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import type { PlaybackPosition } from './audio/player'
-import { stories } from './data/stories'
+import { stories as bundledStories } from './data/stories'
+import type { Story } from './data/types'
+import { isMarked } from './data/places'
+import { usePlaces } from './data/usePlaces'
 import { useJourney, type NowPlaying, type SourceKind } from './journey/useJourney'
 import { MapView } from './map/MapView'
 import { FakePet } from './pet/fakePet'
@@ -8,7 +11,8 @@ import { FakePetPanel } from './pet/FakePetPanel'
 import { PetTestPanel } from './pet/PetTestPanel'
 import { hasWebBluetooth } from './pet/link'
 import { usePet } from './pet/usePet'
-import { routes } from './position/routes'
+import { routes, type Route } from './position/routes'
+import { ShowcaseSetup } from './ShowcaseSetup'
 
 const MUMBAI: [number, number] = [19.076, 72.8777]
 // Paces in metres per second. Stories are about places, so any pace works.
@@ -19,19 +23,33 @@ const PACES = [
   { label: 'Fast', mps: 60 },
 ]
 
-type PetControls = ReturnType<typeof usePet>
+export type PetControls = ReturnType<typeof usePet>
+type PlaceControls = ReturnType<typeof usePlaces>
 
 function App() {
+  const places = usePlaces(bundledStories)
+  const stories = places.stories
   const pet = usePet(stories)
   const journey = useJourney(stories, pet.pet)
   return journey.status === 'idle' ? (
-    <StartScreen journey={journey} pet={pet} />
+    <StartScreen journey={journey} pet={pet} places={places} />
   ) : (
-    <JourneyScreen journey={journey} pet={pet} />
+    <JourneyScreen journey={journey} pet={pet} stories={stories} />
   )
 }
 
-function PetCard({ pet, allowFake }: { pet: PetControls; allowFake: boolean }) {
+/** A simulated walk through the places marked on the spot, to rehearse the showcase indoors. */
+function showcaseRoute(stories: readonly Story[], places: PlaceControls): Route | null {
+  const marked = stories.filter((s) => isMarked(places.overrides[s.id]))
+  if (marked.length < 2) return null
+  return {
+    id: 'showcase-walk',
+    name: 'Walk: through the showcase places',
+    points: marked.map((s) => ({ name: s.place, lat: s.lat, lng: s.lng })),
+  }
+}
+
+export function PetCard({ pet, allowFake }: { pet: PetControls; allowFake: boolean }) {
   // Web Bluetooth doesn't exist on iOS: there the pairing UI is hidden entirely.
   if (!pet.pet && !hasWebBluetooth && !allowFake) return null
   return (
@@ -78,19 +96,50 @@ function PetCard({ pet, allowFake }: { pet: PetControls; allowFake: boolean }) {
   )
 }
 
-function StartScreen({ journey, pet }: { journey: ReturnType<typeof useJourney>; pet: PetControls }) {
+function StartScreen({
+  journey,
+  pet,
+  places,
+}: {
+  journey: ReturnType<typeof useJourney>
+  pet: PetControls
+  places: PlaceControls
+}) {
+  const stories = places.stories
   const onStart = journey.start
   const lastHeard = journey.heard
-  const [source, setSource] = useState<SourceKind>('simulate')
-  const [routeId, setRouteId] = useState(routes[0].id)
+  // Remember the last choice; with showcase places marked, start on real GPS.
+  const [source, setSourceState] = useState<SourceKind>(() => {
+    try {
+      const saved = localStorage.getItem('pif.source')
+      if (saved === 'gps' || saved === 'simulate') return saved
+    } catch {
+      // no storage: fall through
+    }
+    return Object.values(places.overrides).some(isMarked) ? 'gps' : 'simulate'
+  })
+  const setSource = (s: SourceKind) => {
+    setSourceState(s)
+    try {
+      localStorage.setItem('pif.source', s)
+    } catch {
+      // ignore
+    }
+  }
+  const showcase = showcaseRoute(stories, places)
+  const allRoutes = showcase ? [showcase, ...routes] : routes
+  const [routeId, setRouteId] = useState(allRoutes[0].id)
   const [speed, setSpeed] = useState(PACES[3].mps)
   const [noise, setNoise] = useState(false)
-  const route = routes.find((r) => r.id === routeId) ?? routes[0]
+  const route = allRoutes.find((r) => r.id === routeId) ?? allRoutes[0]
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col px-5 pt-10 pb-8">
       <header>
-        <h1 className="text-3xl font-semibold tracking-tight">Play it Forward</h1>
+        <h1 className="flex items-center gap-3 text-3xl font-semibold tracking-tight">
+          Play it Forward
+          <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-800">Debug</span>
+        </h1>
         <p className="mt-3 text-lg leading-snug text-stone-600">
           We cross paths with thousands of people and hundreds of places every day, and know
           almost nothing about any of them.
@@ -123,7 +172,7 @@ function StartScreen({ journey, pet }: { journey: ReturnType<typeof useJourney>;
                 onChange={(e) => setRouteId(e.target.value)}
                 className="mt-1 w-full rounded-xl border border-stone-300 bg-white px-3 py-3 text-base"
               >
-                {routes.map((r) => (
+                {allRoutes.map((r) => (
                   <option key={r.id} value={r.id}>
                     {r.name}
                   </option>
@@ -140,6 +189,20 @@ function StartScreen({ journey, pet }: { journey: ReturnType<typeof useJourney>;
           </p>
         )}
       </section>
+
+      <div className="mt-4">
+        <ShowcaseSetup
+          stories={stories}
+          overrides={places.overrides}
+          measuring={places.measuring}
+          error={places.error}
+          onMark={places.mark}
+          onRadius={places.setRadius}
+          onReset={places.reset}
+          all={places.all}
+          onOff={places.setOff}
+        />
+      </div>
 
       <div className="mt-4">
         <PetCard pet={pet} allowFake={source === 'simulate'} />
@@ -184,7 +247,15 @@ function StartScreen({ journey, pet }: { journey: ReturnType<typeof useJourney>;
   )
 }
 
-function JourneyScreen({ journey, pet }: { journey: ReturnType<typeof useJourney>; pet: PetControls }) {
+export function JourneyScreen({
+  journey,
+  pet,
+  stories,
+}: {
+  journey: ReturnType<typeof useJourney>
+  pet: PetControls
+  stories: readonly Story[]
+}) {
   const { settings, fix, progress, nowPlaying, queued, heard, next, here, error, routeEnded, revealed, path } = journey
   const heardIds = useMemo(() => new Set(heard.map((s) => s.id)), [heard])
   const simulated = settings?.source === 'simulate'
@@ -214,6 +285,7 @@ function JourneyScreen({ journey, pet }: { journey: ReturnType<typeof useJourney
           revealed={revealed}
           heardIds={heardIds}
           playingId={nowPlaying?.story.id ?? null}
+          close={stories.some((s) => s.radius_m <= 50)}
           fallbackCenter={
             settings?.source === 'simulate'
               ? [settings.route.points[0].lat, settings.route.points[0].lng]

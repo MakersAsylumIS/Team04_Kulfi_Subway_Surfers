@@ -21,3 +21,54 @@ body {
 .leaflet-tooltip.pif-story-label::before {
   display: none;
 }
+
+/* ---------- Product theme (the visitor version at /) ----------
+   Light keeps the map's own colours; dark is deliberately minimal. One accent: the pet's
+   cyan (deeper on light backgrounds so it stays readable in sunlight). */
+.pif {
+  --bg: #f4f3ef;
+  --surface: #ffffff;
+  --surface-2: #f1f0eb;
+  --ink: #141414;
+  --muted: #66665f;
+  --line: #e4e2db;
+  --accent: #00a896;
+  --accent-soft: rgba(0, 168, 150, 0.12);
+  --on-accent: #ffffff;
+  background: var(--bg);
+  color: var(--ink);
+}
+.pif.dark {
+  --bg: #0a0b0c;
+  --surface: #131516;
+  --surface-2: #1a1d1e;
+  --ink: #eceeee;
+  --muted: #8a9091;
+  --line: #24282a;
+  --accent: #00f0d8;
+  --accent-soft: rgba(0, 240, 216, 0.12);
+  --on-accent: #001f1c;
+}
+.font-display {
+  font-family: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+/* Dark map: the same OpenStreetMap tiles, turned into a quiet charcoal sketch. */
+.pif.dark .pif-map .leaflet-tile-pane {
+  filter: grayscale(1) invert(1) brightness(0.8) contrast(0.9);
+}
+.pif .pif-map {
+  background: var(--bg);
+}
+.pif.dark .leaflet-tooltip.pif-story-label {
+  background: rgba(19, 21, 22, 0.92);
+  color: var(--ink);
+}
+.pif .leaflet-control-attribution {
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  color: var(--muted);
+  font-size: 10px;
+}
+.pif .leaflet-control-attribution a {
+  color: var(--muted);
+}

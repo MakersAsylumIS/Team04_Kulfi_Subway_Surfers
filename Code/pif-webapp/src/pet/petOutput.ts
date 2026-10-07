@@ -15,6 +15,9 @@ import {
   type PlaybackStateValue,
 } from './protocol.ts'
 
+/** How long the pet shows "You've arrived at …" before the story starts. */
+const ARRIVAL_MS = 3000
+
 /**
  * Plays stories on the pet: sends the id, never the audio. The phone stays silent
  * unless the pet is missing the file, a write fails, or the pet disconnects
@@ -55,6 +58,7 @@ export class PetOutput implements StoryOutput {
     // A new play replaces whatever the pet is playing; no separate stop needed.
     if (this.mode === 'phone') this.phone.stop()
     this.confirmed = false
+    this.lastIdleText = ''
     this.story = story
     this.onEnd = onEnd
     this.state = PlaybackState.playing
@@ -62,8 +66,13 @@ export class PetOutput implements StoryOutput {
     if (!this.connected) return this.fallBackToPhone(0)
     this.mode = 'pet'
     const send = async () => {
-      await this.link.write('nowShowing', encodeNowShowing(story.icon_id, story.place, story.title))
+      // Arrival first: the pet announces the new place for a moment before the story,
+      // so the audio doesn't start out of nowhere.
+      await this.link.write('nowShowing', encodeNowShowing(story.icon_id, `You've arrived at ${story.place}`, 'A story starts in a moment'))
       await this.link.write('haptic', encodeHaptic(Haptic.short))
+      await new Promise((r) => setTimeout(r, ARRIVAL_MS))
+      if (this.story !== story || this.mode !== 'pet') return // skipped or stopped meanwhile
+      await this.link.write('nowShowing', encodeNowShowing(story.icon_id, story.place, story.title))
       await this.link.write('play', encodePlay(story.id))
     }
     send().catch(() => {
@@ -95,6 +104,19 @@ export class PetOutput implements StoryOutput {
     this.mode = 'idle'
     this.story = null
     this.onEnd = null
+  }
+
+  /**
+   * Between stories: what the pet's screen should say (where you are). Only when nothing
+   * is playing, and only when the words change, to keep Bluetooth traffic down.
+   */
+  private lastIdleText = ''
+  showIdle(place: string, line: string) {
+    if (this.mode !== 'idle' || !this.connected) return
+    const text = `${place}|${line}`
+    if (text === this.lastIdleText) return
+    this.lastIdleText = text
+    void this.link.write('nowShowing', encodeNowShowing(0, place, line)).catch(() => {})
   }
 
   position(): PlaybackPosition {

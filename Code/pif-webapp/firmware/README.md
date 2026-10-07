@@ -1,6 +1,7 @@
 # Pet firmware
 
 Built up one piece at a time. Each sketch proves one thing before the next is added.
+**Every wire on the current pet, in one place: [WIRING.md](./WIRING.md).**
 Board facts and pin rules: [HARDWARE.md](../HARDWARE.md). Wiring for the parts on hand:
 [docs/FEATURES.md section 7](../docs/FEATURES.md). Bluetooth bytes:
 [docs/PET-PROTOCOL.md](../docs/PET-PROTOCOL.md).
@@ -12,8 +13,8 @@ Board facts and pin rules: [HARDWARE.md](../HARDWARE.md). Wiring for the parts o
 | 1c | `bt_speaker_test/` | the board as a normal Bluetooth speaker: play anything from a laptop or phone | written; needs the ESP32-A2DP library |
 | 1d | `pet_display_test/` | ST7789 display + Bluetooth: shows what the app sends, including your phone's GPS | compiles |
 | 1e | `display_check/`, `oled_check/` | smallest screen tests: TFT colour cycle; OLED I2C scan + text | compile |
-| 2 | `pet_story_player/` | **Bluetooth + display + WAV from SD, together**: the app's Play plays a real story | compiles for both displays (2026-10-04); test on the board |
-| 2b | + the group's face on the ST7789 | face animation alongside Bluetooth | |
+| 2 | `pet_story_player/` | **Bluetooth + display + WAV from SD, together**: the app's Play plays a real story | **passed** on the board with the OLED (2026-10-04): app → pet audio from SD + display + GPS |
+| 2b | faces in `pet_story_player/` | the pet's face and moods on the TFT, alongside story audio | compiles (2026-10-04); test on the board |
 | 3 | + touch switch and button | pat and double-pat reach the app | |
 | 4 | + WAV from the SD card | real audio, on its own core | |
 | 5 | Bluetooth while audio plays | no stutter (the riskiest step) | |
@@ -102,19 +103,76 @@ app. Missing file → the app plays it on the phone.
 **Pick the display** at the top of the sketch: `#define PET_SCREEN_OLED 0` for the ST7789 TFT
 (primary), `1` for the 1.3" SH1106 OLED (test). All display code is in `pet_screen.h`.
 
-- **TFT wiring:** SCK 18, SDI 23, CS 5, **DC 4** (move it off 21: 21 is the speaker amp
-  switch), RESET 22, LED + VCC 3.3 V, GND.
-- **OLED wiring:** SDA 33, SCL 32 (shared with the codec, no extra pins), VCC 3.3 V, GND.
-  Run `oled_check/` first: its I2C scan should list 0x10 (codec) and 0x3C (OLED).
+- **TFT wiring:** the display has its own SPI bus. SCK → **IO18**, SDI → **IO23**, CS → 5, DC → 22,
+  RESET → the board's EN/RST pin, LED + VCC 3.3 V, GND. `display_check/` uses the same wiring.
+  (On 2026-10-05 it briefly shared the SD card's bus on MTMS/MTDO to free 18/23. The extra wiring
+  on the card's lines made the SD card fail to mount or read, so don't do that.)
+- **DIP switches:** 1 OFF, 2 ON, 3 ON, 4 OFF, 5 OFF (2 and 3 connect the SD card; 1 puts KEY2 on
+  the card's CS line; 4 and 5 run SD lines out to the JTAG header).
+- **OLED wiring:** SDA → IO18, SCL → IO23, VCC 3.3 V, GND (second I2C bus; 32/33 aren't on
+  this board's headers, and the TFT is unplugged in OLED mode). Run `oled_check/` first: its
+  I2C scan should list 0x3C.
 - **SD card:** FAT32, DIP switches DATA3 and CMD ON, files in `/stories/` named like the
   MP3s but `.wav` (e.g. `/stories/mahim-causeway-01.wav`), 16-bit PCM. Mono 22050 Hz is
   plenty for speech and keeps files small.
 - **Partition Scheme:** Huge APP. **Libraries:** NimBLE-Arduino, arduino-audio-tools,
-  arduino-audio-driver, plus Adafruit ST7789 (TFT) or U8g2 (OLED).
+  arduino-audio-driver, JPEGDEC (by Larry Bank, for video), plus Adafruit ST7789 (TFT) or U8g2 (OLED).
+- **Video:** `/media/<name>.mjpeg` + `.wav` + `.cfg` on the card, played by `pet_media.h`; the pet media
+  dashboard (`/media` in the web app) makes, sends and plays them. Or: `node scripts/make-media.mjs <video> [name]`
+  writes them to `firmware/sd-card/media/` (needs ffmpeg) to copy onto the card. `sync-test` there checks sound sync.
+
+**Serial is 921600 baud** (since 2026-10-06, for the pet screen lab): set the Serial Monitor to 921600.
+The lab at `/lab` can draw on the pet's screen over USB ("Lab mode" in `pet_screen.h`) and send it
+whole clips with sound to play from PSRAM (`pet_lab.h`).
 
 **Test without the app:** Serial Monitor (Newline): `ls` lists the card, `play mahim-causeway-01`
-plays it, `pause` / `resume` / `stop`, `vol 0.9`.
+plays it, `pause` / `resume` / `stop`, `vol 0.9`, `+` / `-` (volume in steps of 0.1).
 
 **Test with the app:** pair, then tap Play in **Test the pet**: the story plays on the pet's
 speaker and the app shows "on the pet". Turn on **Show my location on the pet** to see GPS on
 the screen at the same time.
+
+## Step 2b: The pet's face and moods
+
+`pet_story_player` now shows the face from `faces.h` above a two-line caption (place, then title or status), with a progress bar while a story plays and a connection dot in the corner.
+
+**Moods** (same rules in the browser's simulated pet screen in `/debug`):
+
+| Situation | Face |
+|---|---|
+| Idle or playing | Normal, blinking every 3 to 6 s |
+| Arrival (the app's buzz) or a pat | Heart_Eyes for 2 to 3 s |
+| Phone disconnects, story missing from the card | Sad for 2.5 to 3 s |
+| No activity for 2 min / 4 min / 6 min | Bored / Sleepy / screen off |
+
+Any write from the app or a Serial command wakes it. Serial `mood 0` to `mood 6` shows a face for 5 s (0 Angry, 1 Annoyed, 2 Bored, 3 Heart_Eyes, 4 Normal, 5 Sad, 6 Sleepy).
+
+**Changing the faces:** put the PNGs in `assets/pet-faces/` named like `Normal (1).png`, then run
+`node scripts/convert-faces.mjs assets/pet-faces` (needs ffmpeg). It regenerates `faces.h` for the pet and
+`src/pet/faces.json` for the browser, so both always show the same frames.
+
+## Step 2c: The board's keys
+
+`key_check/` confirmed all six keys (2026-10-05): KEY1 = 36, KEY2 = 13, KEY3 = 19, KEY4 = 23,
+KEY5 = 18, KEY6 = 5. Two are free and wired into `pet_story_player`; the rest are SD and display
+pins:
+
+| Button | Job | Tap | Double-tap | Hold |
+|---|---|---|---|---|
+| KEY1 (36) | power | wake up (while asleep) | | 2 s: sleep |
+| KEY3 (19) | story | pause / play | skip | replay the last story |
+| MTDI (12) | volume | up | | down, repeating |
+
+KEY1 is the power key because GPIO 36 can wake the chip from deep sleep and 19 can't. Waking
+restarts the board; the app reconnects on its own. Sleep is not off (codec, amplifier and display
+backlight stay powered), so use a switch on the battery to store the pet.
+
+With the phone connected, KEY3's tap and double-tap go to the app as a pat / double-pat, which
+pauses or skips. Without the phone, the pet does it itself. KEY2 (SD card CS), KEY4/KEY5 (display
+data and clock) and KEY6 (display CS) stay unused: pressing them would short a line the board is
+driving. External buttons can be soldered across KEY1 and KEY3.
+
+**Volume button on MTDI (GPIO 12, JTAG header):** wire it between MTDI and **3.3 V** (not
+ground). GPIO 12 must be LOW at power-on or the board will not boot, so the firmware pulls it down
+and reads HIGH as pressed. Don't hold it while powering on or pressing RST. `key_check/` tests it
+(passed 2026-10-05: LOW at rest, HIGH when pressed).

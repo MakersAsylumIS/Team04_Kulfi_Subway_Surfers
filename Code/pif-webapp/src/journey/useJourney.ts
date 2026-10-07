@@ -46,8 +46,10 @@ const INPUT_NAMES: Record<number, string> = {
 
 /** A story's marker appears on the map once you have been this close to it. */
 const REVEAL_M = 2000
-/** Skip path points closer than this to the last one, to keep the line light. */
+/** Skip path points closer than this to the last one, to keep the line light. Showcase
+ * places tens of metres apart need a much finer line. */
 const PATH_STEP_M = 25
+const PATH_STEP_CLOSE_M = 3
 
 export function useJourney(stories: readonly Story[], pet: PetLink | null) {
   const [status, setStatus] = useState<JourneyStatus>('idle')
@@ -109,7 +111,8 @@ export function useJourney(stories: readonly Story[], pet: PetLink | null) {
       if (f.accuracy <= 100) {
         setPath((p) => {
           const last = p[p.length - 1]
-          if (last && haversineM(last[0], last[1], f.lat, f.lng) < PATH_STEP_M) return p
+          const step = stories.some((st) => st.radius_m <= 50) ? PATH_STEP_CLOSE_M : PATH_STEP_M
+          if (last && haversineM(last[0], last[1], f.lat, f.lng) < step) return p
           return [...p, [f.lat, f.lng]]
         })
       }
@@ -208,6 +211,14 @@ export function useJourney(stories: readonly Story[], pet: PetLink | null) {
     testTogglePauseRef.current = testTogglePause
     testStopRef.current = testStop
   }, [testTogglePause, testStop])
+
+  // Between stories, the pet's screen says where you are: a place name, never coordinates.
+  useEffect(() => {
+    const out = petOutputRef.current
+    if (!out || status !== 'listening') return
+    if (here) out.showIdle(here.inside ? here.name : `near ${here.name}`, here.inside ? 'You are here' : 'Keep walking')
+    else out.showIdle('Listening for places', '')
+  }, [here, status, pet])
 
   // Connect a pet: stories go to it from the next one on. A pat pauses or resumes,
   // a double-pat skips.
