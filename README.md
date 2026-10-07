@@ -84,7 +84,7 @@ Phil Schatzmann's `arduino-audio-tools` and `arduino-audio-driver` (from GitHub)
 |---|---|
 | [`Code/`](Code) | All software. `pif-webapp/` is the app, the pet's firmware, the lab and media tools, and the converter scripts. `Local_Host/` is the standalone TFT Web Lab. See [Code/README.md](Code/README.md). |
 | [`Electronics/`](Electronics) | Block diagram, pin map, wiring, DIP switches, buttons, power. |
-| [`CAD/`](CAD) | Mechanical designs (enclosure): none yet. |
+| [`CAD/`](CAD) | The pet's enclosure: base and front (STL), work in progress. |
 | [`Documentation/`](Documentation) | How it works and guides for every part; the [engineering log](Documentation/ENGINEERING-LOG.md), [research](Documentation/RESEARCH.md), [decisions](Documentation/DECISIONS.md), [platform constraints](Documentation/PLATFORM-CONSTRAINTS.md), [troubleshooting](Documentation/TROUBLESHOOTING.md) and [open questions](Documentation/OPEN-QUESTIONS.md). |
 | [`Photos_Videos/`](Photos_Videos) | Prototype photos and videos; the pet's face animation frames (`Images/Animation.zip`). |
 | [`Reference_Data/`](Reference_Data) | Datasheets, libraries and web specs we relied on. |
@@ -100,7 +100,8 @@ Phil Schatzmann's `arduino-audio-tools` and `arduino-audio-driver` (from GitHub)
 | ✅ | Pet screen lab with live mirroring to the real screen; media dashboard |
 | 🔧 | Video from the SD card with sound: built, being tried on the board |
 | 🔧 | Portrait screen designs: drafted in the lab, to be ported to the firmware |
-| ⏳ | Real stories (text, recordings, sources), battery and power switch, an enclosure |
+| 🔧 | The enclosure: base and front modelled (`CAD/`) |
+| ⏳ | Real stories (text, recordings, sources), battery and power switch |
 
 Details and open decisions: [Documentation/README.md](Documentation/README.md) and
 [docs/FEATURES.md](Code/pif-webapp/docs/FEATURES.md).

@@ -55,7 +55,8 @@ Whether a second pet gets built decides whether it's a working feature or a desc
 - [ ] **Onboard microphones**: untested (some units ship with a capacitor fault); not needed so far
 - [ ] **A vibration motor** for arrivals (needs a MOSFET and flyback diode; no free pin today
       without giving something up)
-- [ ] **An enclosure** (CAD): upright screen, speaker grille, buttons, battery, access to USB and SD
+- [ ] **The enclosure**: base and front are modelled (`CAD/base_v2.stl`, `CAD/front_v3.stl`); print,
+      fit the board, screen, speaker, buttons and battery; add the editable source files
 
 ## Showcase
 

@@ -313,7 +313,7 @@ Next:
 - [ ] Try MJPEG video with sound on the board, and tune sync
 - [ ] Port the chosen portrait designs from the lab to `pet_screen.h`
 - [ ] Battery and a power switch; runtime test
-- [ ] An enclosure (CAD)
+- [ ] The enclosure: base and front modelled in `CAD/`; print and fit
 - [ ] Remembering heard stories and revealing the map as you travel ([FEATURES.md](../Code/pif-webapp/docs/FEATURES.md))
 - [ ] A second pet: the peer-to-peer module is stubbed
 

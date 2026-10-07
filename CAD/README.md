@@ -2,8 +2,20 @@
 
 Mechanical designs: the pet's enclosure. Licence: CERN-OHL-S-2.0 (see [LICENSE.md](../LICENSE.md)).
 
-**None yet.** The pet is currently a bare ESP32-A1S Audio Kit with the screen, speaker and
-button on jumper wires. An enclosure needs to hold:
+## The enclosure (work in progress)
+
+A two-part shell: a base and a front.
+
+| File | Part | Outline (as modelled, presumably mm) |
+|---|---|---|
+| [`base_v2.stl`](base_v2.stl) | Base (version 2) | 89.7 × 83.7 × 23.2 |
+| [`front_v3.stl`](front_v3.stl) | Front (version 3) | 89.7 × 83.7 × 28.1 |
+
+STL files are meshes for printing; GitHub previews them in the browser. The editable source
+files (the CAD model they were exported from) should go here too, so others can change the
+design: an STL alone is hard to modify.
+
+## What it has to hold
 
 | Part | Size / notes |
 |---|---|
